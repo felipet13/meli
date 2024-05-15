@@ -1,0 +1,12 @@
+# catalog entry for pays dataframe
+pays:
+  filepath: data/01_raw/pays.csv
+  type: spark.SparkDataset
+  file_format: csv
+  load_args:
+    header: True
+    inferSchema: True
+  save_args:
+    sep: ','
+    header: True
+    mode: overwrite
