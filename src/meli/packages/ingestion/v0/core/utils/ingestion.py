@@ -14,7 +14,6 @@
 
 import pyspark
 import pyspark.sql.functions as f
-
 from data_integration.v0.core.utils.date_validation import validate_date
 
 

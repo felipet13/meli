@@ -18,9 +18,6 @@ from typing import Dict, Union
 
 import pandas as pd
 import pyspark
-from pyspark.sql import DataFrame, SparkSession
-from pyspark.sql import functions as f
-
 from data_integration.v0.core.utils.ingestion import (
     get_only_filtered_data,
     get_only_incremental_data,
@@ -42,6 +39,8 @@ from data_integration.v0.core.utils.transformations import (
     trim_all_string_columns,
     trim_columns,
 )
+from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql import functions as f
 
 
 class Processor:

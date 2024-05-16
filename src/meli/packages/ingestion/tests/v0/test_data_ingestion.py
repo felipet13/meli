@@ -17,11 +17,10 @@ from datetime import date
 
 import chispa
 import pytest
-from pyspark.sql import DataFrame
-from pyspark.sql.types import DateType, FloatType, StringType, StructField, StructType
-
 from data_integration.tests.v0.conftest import generate_spark_dataframe
 from data_integration.v0.nodes import ingestor
+from pyspark.sql import DataFrame
+from pyspark.sql.types import DateType, FloatType, StringType, StructField, StructType
 
 
 class TestDataIngestion:
