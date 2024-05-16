@@ -1,0 +1,17 @@
+raw_prints:
+  explode_column:
+    event_data
+  columns_to_cast:
+    day: date
+    position: int
+    value_prop: string
+    user_id: int
+
+raw_taps:
+  explode_column:
+    event_data
+  columns_to_cast:
+    day: date
+    position: int
+    value_prop: string
+    user_id: int

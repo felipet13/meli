@@ -10,3 +10,25 @@ pays:
     sep: ','
     header: True
     mode: overwrite
+
+
+prints:
+  filepath: data/01_raw/prints.json
+  type: spark.SparkDataset
+  file_format: json
+  load_args:
+    inferSchema: True
+  save_args:
+    sep: ','
+    mode: overwrite
+
+
+taps:
+  filepath: data/01_raw/taps.json
+  type: spark.SparkDataset
+  file_format: json
+  load_args:
+    inferSchema: True
+  save_args:
+    sep: ','
+    mode: overwrite

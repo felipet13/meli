@@ -4,6 +4,7 @@ from .nodes import (
     create_model_input_table,
     load_shuttles_to_csv,
     preprocess_companies,
+    preprocess_json_df,
     preprocess_reviews,
     preprocess_shuttles,
 )
@@ -17,6 +18,18 @@ def create_pipeline(**kwargs) -> Pipeline:
                 inputs="shuttles_excel",
                 outputs="shuttles@csv",
                 name="load_shuttles_to_csv_node",
+            ),
+            node(
+                func=preprocess_json_df,
+                inputs=["prints", "params:raw_prints"],
+                outputs=["preprocessed_prints", "prints_columns"],
+                name="preprocess_prints_node",
+            ),
+            node(
+                func=preprocess_json_df,
+                inputs=["taps", "params:raw_taps"],
+                outputs=["preprocessed_taps", "taps_columns"],
+                name="preprocess_taps_node",
             ),
             node(
                 func=preprocess_companies,
