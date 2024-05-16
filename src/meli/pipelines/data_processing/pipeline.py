@@ -1,6 +1,6 @@
 from kedro.pipeline import Pipeline, node, pipeline
 
-from .nodes import (
+from .nodes_intermediate import (
     create_model_input_table,
     load_shuttles_to_csv,
     preprocess_companies,

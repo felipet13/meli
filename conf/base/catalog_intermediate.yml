@@ -1,0 +1,23 @@
+preprocessed_prints:
+  filepath: data/02_intermediate/preprocessed_prints.parquet
+  type: spark.SparkDataset
+  file_format: parquet
+  load_args:
+    header: True
+    inferSchema: True
+  save_args:
+    sep: ','
+    header: True
+    mode: overwrite
+
+preprocessed_taps:
+  filepath: data/02_intermediate/preprocessed_taps.parquet
+  type: spark.SparkDataset
+  file_format: parquet
+  load_args:
+    header: True
+    inferSchema: True
+  save_args:
+    sep: ','
+    header: True
+    mode: overwrite
