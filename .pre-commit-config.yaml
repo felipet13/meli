@@ -4,5 +4,5 @@ repos:
     rev: 'v0.1.15' # Replace with latest version, for example 'v0.1.8'
     hooks:
       - id: ruff
-        args: [--fix]
+        args: [ --fix ]
       - id: ruff-format
