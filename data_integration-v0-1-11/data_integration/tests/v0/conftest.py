@@ -88,9 +88,30 @@ def empty_df() -> DataFrame:
 def input_df_ingestion() -> DataFrame:
     """Create mock customer dataframe for tests."""
     data = [
-        ("c001", "1989-11-30", date(2020, 1, 1), "2022-12-25", "Italian", 10.0,),
-        ("c002", "1990-11-30", date(2022, 1, 1), "2022-12-31", "Brazilian", 20.0,),
-        ("c003", "1991-11-30", date(2022, 1, 1), "2022-10-10", "English", 30.0,),
+        (
+            "c001",
+            "1989-11-30",
+            date(2020, 1, 1),
+            "2022-12-25",
+            "Italian",
+            10.0,
+        ),
+        (
+            "c002",
+            "1990-11-30",
+            date(2022, 1, 1),
+            "2022-12-31",
+            "Brazilian",
+            20.0,
+        ),
+        (
+            "c003",
+            "1991-11-30",
+            date(2022, 1, 1),
+            "2022-10-10",
+            "English",
+            30.0,
+        ),
     ]
 
     df = generate_spark_dataframe(data, SCHEMA_INGESTION_ORIG)
@@ -138,7 +159,14 @@ def input_df_transformation() -> DataFrame:
             " Brazilian ",
             20.0,
         ),
-        ("c003", "1991-11-30", date(2022, 1, 1), None, "English", 30.0,),
+        (
+            "c003",
+            "1991-11-30",
+            date(2022, 1, 1),
+            None,
+            "English",
+            30.0,
+        ),
     ]
 
     df = generate_spark_dataframe(data, SCHEMA_TRANSFORMATION)
@@ -166,7 +194,14 @@ def input_df_regex_transformation() -> DataFrame:
             " Br@azili@an!",
             20.0,
         ),
-        ("c003", "1991-11-30", date(2022, 1, 1), None, "@En@g#lish", 30.0,),
+        (
+            "c003",
+            "1991-11-30",
+            date(2022, 1, 1),
+            None,
+            "@En@g#lish",
+            30.0,
+        ),
     ]
 
     df = generate_spark_dataframe(data, SCHEMA_TRANSFORMATION)

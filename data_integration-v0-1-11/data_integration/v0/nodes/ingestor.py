@@ -47,7 +47,8 @@ def transform_data(
 
 
 def ingest_historical_data(
-    raw_df: Union[pyspark.sql.DataFrame, pd.DataFrame], input_parameters_dict: Dict,
+    raw_df: Union[pyspark.sql.DataFrame, pd.DataFrame],
+    input_parameters_dict: Dict,
 ) -> pyspark.sql.DataFrame:
     """Return the sliced data for incremental ingestion.
 
@@ -64,7 +65,8 @@ def ingest_historical_data(
 
     # Produce sliced data
     historical_data = processor.ingest_historical_data(
-        input_parameters_dict=input_parameters_dict, raw_df=raw_df,
+        input_parameters_dict=input_parameters_dict,
+        raw_df=raw_df,
     )
     return historical_data
 

@@ -24,11 +24,17 @@ class TestLogSparkInfo:
     def test_log_spark_info_true(self, input_df_transformation: DataFrame, caplog):
         """Test logger operation when log_spark_info is set to True."""
 
-        instructions = {"rename_columns": {"birth_dt": "date_of_birth",}}
+        instructions = {
+            "rename_columns": {
+                "birth_dt": "date_of_birth",
+            }
+        }
 
         with caplog.at_level(logging.DEBUG, logger="data_integration"):
             _ = ingestor.transform_data(
-                input_df_transformation, instructions, log_spark_info=True,
+                input_df_transformation,
+                instructions,
+                log_spark_info=True,
             )
 
         print(f"{caplog.text[:500]=}")
@@ -48,7 +54,11 @@ class TestLogSparkInfo:
     def test_log_spark_info_false(self, input_df_transformation: DataFrame, caplog):
         """Test logger operation when log_spark_info is set to True."""
 
-        instructions = {"rename_columns": {"birth_dt": "date_of_birth",}}
+        instructions = {
+            "rename_columns": {
+                "birth_dt": "date_of_birth",
+            }
+        }
 
         with caplog.at_level(logging.DEBUG, logger="data_integration"):
             _ = ingestor.transform_data(

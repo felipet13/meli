@@ -58,9 +58,9 @@ def _get_datatype(python_type: str) -> DataType:
         A `pyspark.sql.types` type
 
     Examples:
-        >>> _get_datatype('int')
+        >>> _get_datatype("int")
         IntegerType()
-        >>> _get_datatype('str')
+        >>> _get_datatype("str")
         StringType()
     """
     # mapping values taken from pyspark source code: `pyspark/sql/types.py`
@@ -90,10 +90,10 @@ def _assert_subset_in_df(df_columns: List[str], expected_columns: List[str]) -> 
         expected_columns: List of columns to have their existence checked
 
     Examples:
-        >>> _assert_subset_in_df(['a', 'b'], ['c'])
+        >>> _assert_subset_in_df(["a", "b"], ["c"])
         Assertion error with the message
         `Column(s) ['c'] is(are) not present in the dataframe...`
-        >>> _assert_subset_in_df(['a', 'b'], ['a'])
+        >>> _assert_subset_in_df(["a", "b"], ["a"])
         No assertion error
 
     Raises:
@@ -180,7 +180,7 @@ def cast_df_columns(df: DataFrame, casting_map: dict) -> DataFrame:
         |column_a |column_b |
         |-------- |-------- |
         |       1 |       2 |
-        >>> cast_df_columns(df, {'column_b': 'str'}).collect()
+        >>> cast_df_columns(df, {"column_b": "str"}).collect()
         [Row(column_a=1, column_b='2')]
     """
     _assert_subset_in_df(df_columns=df.columns, expected_columns=casting_map.keys())
@@ -190,7 +190,6 @@ def cast_df_columns(df: DataFrame, casting_map: dict) -> DataFrame:
     new_casted_columns = []
 
     for column_name, new_column_type in casting_map.items():
-
         other_columns.remove(column_name)
 
         # convert python type into pyspark.sql.types object and append the selected col
@@ -221,7 +220,7 @@ def rename_df_columns(df: DataFrame, renaming_map: dict) -> DataFrame:
         |column_a |column_b |
         |-------- |-------- |
         |       1 |       2 |
-        >>> dict = {'column_a': 'new_column_name'}
+        >>> dict = {"column_a": "new_column_name"}
         >>> rename_df_columns(df, dict).collect()
         [Row(column_b=2, new_column_name=1)]
     """
@@ -231,7 +230,6 @@ def rename_df_columns(df: DataFrame, renaming_map: dict) -> DataFrame:
     new_renamed_columns = []
 
     for prev_column_name, new_column_name in renaming_map.items():
-
         other_columns.remove(prev_column_name)
 
         new_renamed_columns.append(f.col(prev_column_name).alias(new_column_name))
@@ -267,7 +265,7 @@ def trim_columns(df: DataFrame, trimming_cols: list) -> DataFrame:
         |  2|43421 Margarita St|        NY|
         |  3|  13111 Siemon Ave|        CA|
         +---+------------------+----------+
-        >>> list = ['address', 'state']
+        >>> list = ["address", "state"]
         >>> trim_columns(df, list).show()
         +---+------------------+-----+
         | id|           address|state|
@@ -332,7 +330,7 @@ def trim_all_string_columns(df: DataFrame, instructions: None) -> DataFrame:
         |  2|43421 Margarita St|        NY|
         |  3|  13111 Siemon Ave|        CA|
         +---+------------------+----------+
-        >>> list = ['address', 'state']
+        >>> list = ["address", "state"]
         >>> trim_all_string_columns(df, list).show()
         +---+------------------+-----+
         | id|           address|state|
@@ -360,7 +358,8 @@ def trim_all_string_columns(df: DataFrame, instructions: None) -> DataFrame:
 
 
 def regex_replace_values(
-    df: DataFrame, columns_dict: Dict[str, Dict[str, str]],
+    df: DataFrame,
+    columns_dict: Dict[str, Dict[str, str]],
 ) -> DataFrame:
     r"""A function that replaces substrings in specified columns of a PySpark DataFrame.
 
@@ -488,7 +487,7 @@ def apply_sql_expression(df: DataFrame, expression_map: dict) -> DataFrame:
         |column_a |column_b   |
         |-------- |---------- |
         |       1 |2020-10-10 |
-        >>> dict = {"column_b": "date_format(column_b, 'y')" }
+        >>> dict = {"column_b": "date_format(column_b, 'y')"}
         >>> __apply_expression_to_column(df, dict).collect()
         [Row(column_a=1, column_b='2020')]
     """
@@ -556,7 +555,7 @@ def drop_na_from_subset(df: DataFrame, subset: list) -> DataFrame:
         |-------- |-------- |
         |       1 |    null |
         |       2 |       2 |
-        >>> drop_na_from_subset(df, ['column_b']).collect()
+        >>> drop_na_from_subset(df, ["column_b"]).collect()
         [Row(column_a=2, column_b=2)]
     """
     _assert_subset_in_df(df_columns=df.columns, expected_columns=subset)
@@ -581,7 +580,7 @@ def keep_columns(df: DataFrame, subset: list) -> DataFrame:
         |-------- |-------- |
         |       1 |    null |
         |       2 |       2 |
-        >>> keep_columns(df, ['column_b']).collect()
+        >>> keep_columns(df, ["column_b"]).collect()
         [Row(column_b=None), Row(column_b=2)]
     """
     _assert_subset_in_df(df_columns=df.columns, expected_columns=subset)
@@ -606,7 +605,7 @@ def drop_columns(df: DataFrame, subset: list) -> DataFrame:
         |-------- |-------- |
         |       1 |    null |
         |       2 |       2 |
-        >>> drop_columns(df, ['column_b']).collect()
+        >>> drop_columns(df, ["column_b"]).collect()
         [Row(column_a=1), Row(column_a=2)]
     """
     _assert_subset_in_df(df_columns=df.columns, expected_columns=subset)
@@ -632,7 +631,7 @@ def drop_duplicates(df: DataFrame, subset: list) -> DataFrame:
         |       1 |    null |
         |       1 |       1 |
         |       2 |       2 |
-        >>> drop_duplicates(df, ['column_a']).collect()
+        >>> drop_duplicates(df, ["column_a"]).collect()
         [Row(column_a=1, column_b=None),
          Row(column_a=2, column_b=2)]
     """
@@ -687,7 +686,10 @@ def _flag_matching_rows(df: DataFrame, expression_map: dict) -> DataFrame:
 
         # store these temp columns to allow the caller to remove them later
         temp_columns.append(new_column_name)
-        df = df.select("*", f.expr(expression).alias(new_column_name),)
+        df = df.select(
+            "*",
+            f.expr(expression).alias(new_column_name),
+        )
 
     # returns tuple with the dataframe and additional column names (matching flags)
     return (df, temp_columns)
@@ -735,7 +737,10 @@ def _create_final_flag(df: DataFrame, expression_map: dict) -> DataFrame:
     temp_columns = [f.col(x) for x in temp_column_names]
     # coalesce all the temp columns, resulting in a True value only if the temp columns
     # have some True in these columns
-    df = df.select("*", f.coalesce(*temp_columns).alias(final_flag_column_name),)
+    df = df.select(
+        "*",
+        f.coalesce(*temp_columns).alias(final_flag_column_name),
+    )
 
     # Return relevant information to the caller:
     # - the dataframe with original and additional temporary columns
@@ -894,7 +899,7 @@ def dataframe_sampling(
         |  5|    lion|
         |  6|pressure|
         +---+--------+
-        >>> df.sample(withReplacement=True , fraction = 0.4, seed =35).show()
+        >>> df.sample(withReplacement=True, fraction=0.4, seed=35).show()
         +---+-------+
         |_id|  label|
         +---+-------+
@@ -906,7 +911,7 @@ def dataframe_sampling(
         |  3| bigger|
         |  4|  money|
         +---+-------+
-        >>> df.sample(withReplacement=False , fraction = 0.4, seed =35).show()
+        >>> df.sample(withReplacement=False, fraction=0.4, seed=35).show()
         +---+--------+
         |_id|   label|
         +---+--------+

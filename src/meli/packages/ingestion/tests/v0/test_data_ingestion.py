@@ -90,7 +90,8 @@ class TestDataIngestion:
         }
 
         output_df = ingestor.ingest_historical_data(
-            raw_df=input_df_ingestion, input_parameters_dict=raw_parameters_dict,
+            raw_df=input_df_ingestion,
+            input_parameters_dict=raw_parameters_dict,
         )
 
         chispa.assert_df_equality(
@@ -230,7 +231,8 @@ class TestDataIngestion:
         }
 
         output_df = ingestor.ingest_historical_data(
-            raw_df=input_df_ingestion, input_parameters_dict=raw_parameters_dict,
+            raw_df=input_df_ingestion,
+            input_parameters_dict=raw_parameters_dict,
         )
 
         chispa.assert_df_equality(

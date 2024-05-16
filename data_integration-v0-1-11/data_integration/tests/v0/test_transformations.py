@@ -72,7 +72,14 @@ class TestDatatransformation:  # pylint: disable=R0904
                 " Brazilian ",
                 20.0,
             ),
-            ("c003", "1991-11-30", date(2022, 1, 1), None, "English", 30.0,),
+            (
+                "c003",
+                "1991-11-30",
+                date(2022, 1, 1),
+                None,
+                "English",
+                30.0,
+            ),
         ]
         df = generate_spark_dataframe(data, EXP_SCHEMA)
 
@@ -80,7 +87,8 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_rename_operation(
-        input_df_transformation: DataFrame, exp_rename_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_rename_df: DataFrame,
     ):
         """Test rename operation."""
 
@@ -119,9 +127,30 @@ class TestDatatransformation:  # pylint: disable=R0904
         )
 
         data = [
-            ("c001", "1989-11-30", date(2020, 1, 1), 1640995200, "Italian", 10.0,),
-            ("c002", "1990-11-30", date(2022, 1, 1), 1641081600, " Brazilian ", 20.0,),
-            ("c003", "1991-11-30", date(2022, 1, 1), None, "English", 30.0,),
+            (
+                "c001",
+                "1989-11-30",
+                date(2020, 1, 1),
+                1640995200,
+                "Italian",
+                10.0,
+            ),
+            (
+                "c002",
+                "1990-11-30",
+                date(2022, 1, 1),
+                1641081600,
+                " Brazilian ",
+                20.0,
+            ),
+            (
+                "c003",
+                "1991-11-30",
+                date(2022, 1, 1),
+                None,
+                "English",
+                30.0,
+            ),
         ]
         df = generate_spark_dataframe(data, EXP_SCHEMA)
 
@@ -129,7 +158,8 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_cast_operation(
-        input_df_transformation: DataFrame, exp_cast_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_cast_df: DataFrame,
     ):
         """Test cast operation."""
 
@@ -140,7 +170,10 @@ class TestDatatransformation:  # pylint: disable=R0904
                 "update_dt": "int",
             }
         }
-        output_df = ingestor.transform_data(input_df_transformation, instructions,)
+        output_df = ingestor.transform_data(
+            input_df_transformation,
+            instructions,
+        )
 
         chispa.assert_df_equality(
             output_df,
@@ -183,7 +216,14 @@ class TestDatatransformation:  # pylint: disable=R0904
                 "Brazilian",
                 20.0,
             ),
-            ("c003", "1991-11-30", date(2022, 1, 1), None, "English", 30.0,),
+            (
+                "c003",
+                "1991-11-30",
+                date(2022, 1, 1),
+                None,
+                "English",
+                30.0,
+            ),
         ]
         df = generate_spark_dataframe(data, EXP_SCHEMA)
 
@@ -191,7 +231,9 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_trim_all_string_operation(
-        input_df_transformation: DataFrame, exp_trim_all_string_df: DataFrame, caplog,
+        input_df_transformation: DataFrame,
+        exp_trim_all_string_df: DataFrame,
+        caplog,
     ):
         """Test trim operation."""
         caplog.set_level(logging.INFO)
@@ -240,7 +282,14 @@ class TestDatatransformation:  # pylint: disable=R0904
                 "Brazilian",
                 20.0,
             ),
-            ("c003", "1991-11-30", date(2022, 1, 1), None, "English", 30.0,),
+            (
+                "c003",
+                "1991-11-30",
+                date(2022, 1, 1),
+                None,
+                "English",
+                30.0,
+            ),
         ]
         df = generate_spark_dataframe(data, EXP_SCHEMA)
 
@@ -248,7 +297,8 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_trim_operation(
-        input_df_transformation: DataFrame, exp_trim_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_trim_df: DataFrame,
     ):
         """Test trim operation."""
 
@@ -311,12 +361,16 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_fillna_operation(
-        input_df_transformation: DataFrame, exp_fillna_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_fillna_df: DataFrame,
     ):
         """Test fillna operation."""
 
         instructions = {"fill_na": {"update_dt": "2020-01-01 00:00:00"}}
-        output_df = ingestor.transform_data(input_df_transformation, instructions,)
+        output_df = ingestor.transform_data(
+            input_df_transformation,
+            instructions,
+        )
 
         chispa.assert_df_equality(
             output_df,
@@ -366,12 +420,16 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_drop_null_values_operation(
-        input_df_transformation: DataFrame, exp_drop_null_values_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_drop_null_values_df: DataFrame,
     ):
         """Test drop_null_values operation."""
 
         instructions = {"drop_null_values": ["update_dt"]}
-        output_df = ingestor.transform_data(input_df_transformation, instructions,)
+        output_df = ingestor.transform_data(
+            input_df_transformation,
+            instructions,
+        )
 
         chispa.assert_df_equality(
             output_df,
@@ -414,7 +472,14 @@ class TestDatatransformation:  # pylint: disable=R0904
                 " Brazilian ",
                 20.0,
             ),
-            ("c003", "1991-12-10", 2022, None, "English", 30.0,),
+            (
+                "c003",
+                "1991-12-10",
+                2022,
+                None,
+                "English",
+                30.0,
+            ),
         ]
         df = generate_spark_dataframe(data, EXP_SCHEMA)
 
@@ -422,7 +487,8 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_sql_expression_operation(
-        input_df_transformation: DataFrame, exp_sql_expression_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_sql_expression_df: DataFrame,
     ):
         """Test apply_sql_expression operation."""
 
@@ -433,7 +499,10 @@ class TestDatatransformation:  # pylint: disable=R0904
                 "'yyyy-MM-dd')",
             }
         }
-        output_df = ingestor.transform_data(input_df_transformation, instructions,)
+        output_df = ingestor.transform_data(
+            input_df_transformation,
+            instructions,
+        )
 
         chispa.assert_df_equality(
             output_df,
@@ -458,9 +527,24 @@ class TestDatatransformation:  # pylint: disable=R0904
         )
 
         data = [
-            ("c001", "1989-11-30", date(2020, 1, 1), datetime(2022, 1, 1, 0, 0, 0, 0),),
-            ("c002", "1990-11-30", date(2022, 1, 1), datetime(2022, 1, 2, 0, 0, 0, 0),),
-            ("c003", "1991-11-30", date(2022, 1, 1), None,),
+            (
+                "c001",
+                "1989-11-30",
+                date(2020, 1, 1),
+                datetime(2022, 1, 1, 0, 0, 0, 0),
+            ),
+            (
+                "c002",
+                "1990-11-30",
+                date(2022, 1, 1),
+                datetime(2022, 1, 2, 0, 0, 0, 0),
+            ),
+            (
+                "c003",
+                "1991-11-30",
+                date(2022, 1, 1),
+                None,
+            ),
         ]
         df = generate_spark_dataframe(data, EXP_SCHEMA)
 
@@ -468,12 +552,16 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_drop_columns_operation(
-        input_df_transformation: DataFrame, exp_drop_columns_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_drop_columns_df: DataFrame,
     ):
         """Test drop_columns operation."""
 
         instructions = {"drop_columns": ["nationality", "taxes_paid"]}
-        output_df = ingestor.transform_data(input_df_transformation, instructions,)
+        output_df = ingestor.transform_data(
+            input_df_transformation,
+            instructions,
+        )
 
         chispa.assert_df_equality(
             output_df,
@@ -524,14 +612,18 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_drop_duplicates_operation(
-        input_df_transformation: DataFrame, exp_drop_duplicates_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_drop_duplicates_df: DataFrame,
     ):
         """Test drop_duplicates operation."""
 
         instructions = {
             "drop_duplicates": ["joining_dt"],
         }
-        output_df = ingestor.transform_data(input_df_transformation, instructions,)
+        output_df = ingestor.transform_data(
+            input_df_transformation,
+            instructions,
+        )
 
         chispa.assert_df_equality(
             output_df,
@@ -554,9 +646,18 @@ class TestDatatransformation:  # pylint: disable=R0904
         )
 
         data = [
-            ("c001", date(2020, 1, 1),),
-            ("c002", date(2022, 1, 1),),
-            ("c003", date(2022, 1, 1),),
+            (
+                "c001",
+                date(2020, 1, 1),
+            ),
+            (
+                "c002",
+                date(2022, 1, 1),
+            ),
+            (
+                "c003",
+                date(2022, 1, 1),
+            ),
         ]
         df = generate_spark_dataframe(data, EXP_SCHEMA)
 
@@ -564,12 +665,16 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_keep_columns_operation(
-        input_df_transformation: DataFrame, exp_keep_columns_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_keep_columns_df: DataFrame,
     ):
         """Test keep operation."""
 
         instructions = {"keep_columns": ["customer_id", "joining_dt"]}
-        output_df = ingestor.transform_data(input_df_transformation, instructions,)
+        output_df = ingestor.transform_data(
+            input_df_transformation,
+            instructions,
+        )
 
         chispa.assert_df_equality(
             output_df,
@@ -611,7 +716,8 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_drop_rows_operation(
-        input_df_transformation: DataFrame, exp_drop_rows_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_drop_rows_df: DataFrame,
     ):
         """Test rename operation."""
 
@@ -623,7 +729,10 @@ class TestDatatransformation:  # pylint: disable=R0904
                 "'%2' THEN True ELSE NULL END",
             }
         }
-        output_df = ingestor.transform_data(input_df_transformation, instructions,)
+        output_df = ingestor.transform_data(
+            input_df_transformation,
+            instructions,
+        )
 
         chispa.assert_df_equality(
             output_df,
@@ -658,7 +767,14 @@ class TestDatatransformation:  # pylint: disable=R0904
                 "Italian",
                 10.0,
             ),
-            ("c003", "1991-11-30", date(2022, 1, 1), None, "English", 30.0,),
+            (
+                "c003",
+                "1991-11-30",
+                date(2022, 1, 1),
+                None,
+                "English",
+                30.0,
+            ),
         ]
         df = generate_spark_dataframe(data, EXP_SCHEMA)
 
@@ -666,7 +782,8 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_keep_rows_operation(
-        input_df_transformation: DataFrame, exp_keep_rows_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_keep_rows_df: DataFrame,
     ):
         """Test keep rows operation."""
 
@@ -678,7 +795,10 @@ class TestDatatransformation:  # pylint: disable=R0904
                 "THEN True ELSE NULL END",
             }
         }
-        output_df = ingestor.transform_data(input_df_transformation, instructions,)
+        output_df = ingestor.transform_data(
+            input_df_transformation,
+            instructions,
+        )
 
         chispa.assert_df_equality(
             output_df,
@@ -702,7 +822,11 @@ class TestDatatransformation:  # pylint: disable=R0904
         )
 
         data = [
-            ("c001", "2020", 1640995200,),
+            (
+                "c001",
+                "2020",
+                1640995200,
+            ),
         ]
         df = generate_spark_dataframe(data, EXP_SCHEMA)
 
@@ -710,7 +834,8 @@ class TestDatatransformation:  # pylint: disable=R0904
 
     @staticmethod
     def test_all_operations(
-        input_df_transformation: DataFrame, exp_all_operations_df: DataFrame,
+        input_df_transformation: DataFrame,
+        exp_all_operations_df: DataFrame,
     ):
         """Test all operations."""
 
@@ -745,7 +870,10 @@ class TestDatatransformation:  # pylint: disable=R0904
                 "WHEN update_dt > 1641006000 THEN True ELSE NULL END",
             },
         }
-        output_df = ingestor.transform_data(input_df_transformation, instructions,)
+        output_df = ingestor.transform_data(
+            input_df_transformation,
+            instructions,
+        )
 
         chispa.assert_df_equality(
             output_df,

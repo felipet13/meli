@@ -34,7 +34,7 @@ CONFIG_LOADER_ARGS = {
     "default_run_env": "local",
     "config_patterns": {
         "spark": ["spark*", "spark*/**"],
-    }
+    },
 }
 
 # Class that manages Kedro's library components.

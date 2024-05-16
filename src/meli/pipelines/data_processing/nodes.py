@@ -11,7 +11,9 @@ from pyspark.sql.functions import col
 logger = logging.getLogger(__name__)
 
 
-def preprocess_json_df(df_raw: SparkDataFrame, parameters: Dict) -> Tuple[SparkDataFrame, Dict]:
+def preprocess_json_df(
+    df_raw: SparkDataFrame, parameters: Dict
+) -> Tuple[SparkDataFrame, Dict]:
     """Preprocesses the data for df_raw.
 
     Args:
@@ -38,10 +40,9 @@ def preprocess_json_df(df_raw: SparkDataFrame, parameters: Dict) -> Tuple[SparkD
         logger.info("Columns_to_cast: %s", parameters.get("columns_to_cast"))
         for column, type in parameters["columns_to_cast"].items():
             df_raw = df_raw.withColumn(column, col(column).cast(type))
- 
+
     # Drop columns that aren't required
     if parameters.get("columns_to_drop"):
-            df_raw = df_raw.drop(*parameters["columns_to_drop"])
-
+        df_raw = df_raw.drop(*parameters["columns_to_drop"])
 
     return df_raw, {"columns": df_raw.columns, "data_type": "df_raw"}
