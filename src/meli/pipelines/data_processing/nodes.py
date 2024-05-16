@@ -5,8 +5,8 @@ import logging
 import pandas as pd
 from pyspark.sql import Column
 from pyspark.sql import DataFrame as SparkDataFrame
-from pyspark.sql.functions import col, regexp_replace, max
-from pyspark.sql.types import DoubleType
+from pyspark.sql.functions import col
+# from pyspark.sql.types import DoubleType
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +21,7 @@ def preprocess_json_df(df_raw: SparkDataFrame, parameters: Dict) -> Tuple[SparkD
         Preprocessed data, with `event_data` column splitting/exploding a column of dicts
         to regular columns.
     """
+    breakpoint()
     # Use from parameters dict the column of dicts to be exploded
     if parameters.get("explode_column") is not None:
         logger.info("Explode_column: %s", parameters.get("explode_column"))
@@ -44,40 +45,3 @@ def preprocess_json_df(df_raw: SparkDataFrame, parameters: Dict) -> Tuple[SparkD
 
 
     return df_raw, {"columns": df_raw.columns, "data_type": "df_raw"}
-
-
-# def incremental_ingestion(df_raw: SparkDataFrame, paramters: Dict) -> Tuple[str, str]:
-#     """Ingests data incrementally given offset frequency.
-
-#     Args:
-#         df_raw: Raw data.
-#         parameters: Parameters defined in parameters/data_processing.yml.
-#     Returns:
-#         sliced ingested data.
-#     """
-#     today = date.today()
-
-#     # Find most recent available date in raw dataframe
-#     max_date = df_raw.select(max(paramters['date_col']).alias('max_date'))
-
-    
-
-#     # Incremental ingestion logic
-     
-    
-
-
-#     return sliced_df
-
-
-# def historical_ingestion(df_raw: SparkDataFrame, paramters: Dict) -> Tuple[str, str]:
-#     """Ingests data incrementally given offset frequency.
-
-#     Args:
-#         df_raw: Raw data.
-#         parameters: Parameters defined in parameters/data_processing.yml.
-#     Returns:
-#         Ingested data.
-#     """
-#     # Incremental ingestion logic
-#     return sliced_df

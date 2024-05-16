@@ -6,6 +6,8 @@ raw_prints:
     position: int
     value_prop: string
     user_id: int
+  date_column: day
+  
 
 raw_taps:
   explode_column:
@@ -15,3 +17,4 @@ raw_taps:
     position: int
     value_prop: string
     user_id: int
+  date_column: day
