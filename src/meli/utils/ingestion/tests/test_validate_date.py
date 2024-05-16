@@ -14,7 +14,7 @@
 # flake8: noqa
 import pytest
 
-from data_integration.v0.core.utils.date_validation import validate_date
+from ingestion.core.utils.date_validation import validate_date
 
 
 def test_valid_date():

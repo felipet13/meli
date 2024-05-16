@@ -18,7 +18,7 @@ from typing import Dict, Union
 
 import pandas as pd
 import pyspark
-from data_integration.v0.core.processor import Processor
+from ingestion.core.processor import Processor
 
 
 def transform_data(
