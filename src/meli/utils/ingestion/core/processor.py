@@ -18,12 +18,15 @@ from typing import Dict, Union
 
 import pandas as pd
 import pyspark
-from data_integration.v0.core.utils.ingestion import (
+from pyspark.sql import DataFrame, SparkSession
+from pyspark.sql import functions as f
+
+from ingestion.core.utils.ingestion import (
     get_only_filtered_data,
     get_only_incremental_data,
 )
-from data_integration.v0.core.utils.spark_info import SparkInfo
-from data_integration.v0.core.utils.transformations import (
+from ingestion.core.utils.spark_info import SparkInfo
+from ingestion.core.utils.transformations import (
     apply_sql_expression,
     cast_df_columns,
     dataframe_sampling,
@@ -39,8 +42,6 @@ from data_integration.v0.core.utils.transformations import (
     trim_all_string_columns,
     trim_columns,
 )
-from pyspark.sql import DataFrame, SparkSession
-from pyspark.sql import functions as f
 
 
 class Processor:

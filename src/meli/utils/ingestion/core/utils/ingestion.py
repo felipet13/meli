@@ -14,7 +14,8 @@
 
 import pyspark
 import pyspark.sql.functions as f
-from data_integration.v0.core.utils.date_validation import validate_date
+
+from ingestion.core.utils.date_validation import validate_date
 
 
 def get_only_incremental_data(
