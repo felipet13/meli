@@ -22,7 +22,7 @@ def preprocess_json_df(df_raw: SparkDataFrame, parameters: Dict) -> Tuple[SparkD
     """
     # Use from parameters dict the column of dicts to be exploded
     if parameters.get("explode_column") is not None:
-        logger.info("Parameters: %s", parameters)
+        logger.info("Explode_column: %s", parameters.get("explode_column"))
 
         col_to_explode = parameters["explode_column"] + ".*"
         cols_less_col_explode = df_raw.columns.copy()
@@ -33,8 +33,9 @@ def preprocess_json_df(df_raw: SparkDataFrame, parameters: Dict) -> Tuple[SparkD
 
     # enforce data types in declared columns
     if parameters.get("columns_to_cast") is not None:
-            for column, type in parameters["columns_to_cast"].items():
-                df_raw = df_raw.withColumn(column, col(column).cast(type))
+        logger.info("Columns_to_cast: %s", parameters.get("columns_to_cast"))
+        for column, type in parameters["columns_to_cast"].items():
+            df_raw = df_raw.withColumn(column, col(column).cast(type))
  
     # Drop columns that aren't required
     if parameters.get("columns_to_drop"):
