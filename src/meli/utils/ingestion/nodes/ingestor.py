@@ -11,7 +11,7 @@
 # permission of QuantumBlack.
 """Wrapper for processor class and functions found in processor module.
 
-Serves as entry point in hydra.
+Serves as entry point.
 """
 
 from typing import Dict, Union
@@ -19,30 +19,6 @@ from typing import Dict, Union
 import pandas as pd
 import pyspark
 from ingestion.core.processor import Processor
-
-
-def transform_data(
-    raw_df: Union[pyspark.sql.DataFrame, pd.DataFrame],
-    input_parameters_dict: Dict,
-    log_spark_info: bool = False,
-) -> pyspark.sql.DataFrame:
-    """Apply data transformations on the input dataframe.
-
-    Args:
-        raw_df: Input dataframe to apply data transformation.
-        input_parameters_dict: Dict of params to be passed to the processor class
-        constructor.
-        log_spark_info: Logs the final Spark plan in `DEBUG` level.
-
-    Returns:
-        Dataframe already transformed.
-    """
-    # Instantiation
-    processor = Processor()
-
-    # Produce transformed data
-    historical_data = processor.transform(raw_df, input_parameters_dict, log_spark_info)
-    return historical_data
 
 
 def ingest_historical_data(

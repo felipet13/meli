@@ -1,6 +1,9 @@
 raw_prints:
   explode_column:
     event_data
+  #Accepted values for `type`: `str`, `bool`, `int`, `long`, `float`, `double`,
+  #  `bytearray`, `bytes`, `decimal`, `date`, `datetime`, `time`, `timestamp`, `none`.
+  # If the `type` is not recognized, StringType will be returned.
   columns_to_cast:
     day: date
     position: int

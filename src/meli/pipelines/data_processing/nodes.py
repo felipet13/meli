@@ -21,7 +21,6 @@ def preprocess_json_df(
         Preprocessed data, with `event_data` column splitting/exploding a column of dicts
         to regular columns.
     """
-    breakpoint()
     # Use from parameters dict the column of dicts to be exploded
     if parameters.get("explode_column") is not None:
         logger.info("Explode_column: %s", parameters.get("explode_column"))

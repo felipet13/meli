@@ -10,7 +10,7 @@
 # only and may only be shared outside your organisation with the prior written
 # permission of QuantumBlack.
 # pylint: disable=invalid-name
-"""Data-integration processor module."""
+"""Data-Ingestion processor module."""
 
 import logging
 from pprint import pformat
@@ -18,34 +18,16 @@ from typing import Dict, Union
 
 import pandas as pd
 import pyspark
-from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql import functions as f
 
 from ingestion.core.utils.ingestion import (
     get_only_filtered_data,
     get_only_incremental_data,
 )
-from ingestion.core.utils.spark_info import SparkInfo
-from ingestion.core.utils.transformations import (
-    apply_sql_expression,
-    cast_df_columns,
-    dataframe_sampling,
-    drop_columns,
-    drop_duplicates,
-    drop_na_from_subset,
-    drop_rows,
-    fill_na,
-    keep_columns,
-    keep_rows,
-    regex_replace_values,
-    rename_df_columns,
-    trim_all_string_columns,
-    trim_columns,
-)
 
 
 class Processor:
-    """Process data integration according to received parameters.
+    """Process data ingestion according to received parameters.
 
     The main entry point of the class is the method `ingest_data`.
     """
@@ -55,132 +37,6 @@ class Processor:
         self.df = None
         self.parameters_dict = None
         self.logger = logging.getLogger(__name__)
-
-    @staticmethod
-    def transform(
-        raw_df: Union[DataFrame, pd.DataFrame],
-        instructions: Dict,
-        log_spark_info: bool = False,
-    ) -> DataFrame:
-        """Apply transformations on a dataframe, based on a configuration dictionary.
-
-        The predefined order for the transformation steps are:
-
-        - Rename columns first.
-        - Cast datatypes.
-        - Fill "na" values.
-        - Apply custom Spark SQL expressions for (very) flexible transformations.
-        - Drop rows with null values (after above transformations).
-        - Clean the dataframe, removing unnecessary columns/rows after all.
-
-        Args:
-            raw_df: PySpark or Pandas Dataframe to be updated.
-            instructions: Config dictionary that contains the parameters for the
-                transformations.
-            log_spark_info: Logs the final Spark plan in `DEBUG` level.
-
-        Raises:
-            ValueError: Raised if the input dataframes is not an instance of
-                Spark or Pandas dataframe.
-
-        Returns:
-            Dataframe with columns updated
-
-        Examples:
-            Being `df`:
-
-            >>> print(df)
-            |column_a   |column_b |
-            |---------- |-------- |
-            |2020-10-10 |    null |
-            |2020-09-09 |       2 |
-            >>> dict = {
-                 "drop_rows": {
-                     "keep_non_null":
-                         "CASE WHEN column_b IS NULL THEN True ELSE NULL END",
-                 },
-                 "rename_columns": {
-                     "column_a": "new_year",
-                 },
-                 "apply_sql_expression": {
-                     "new_year": "date_format(new_year, 'y')",
-             }
-            >>> transform(df, dict).collect()
-            [Row(new_year=2020, column_b=2)]
-        """
-        logger = logging.getLogger(__name__)
-
-        # if raw_df is not a Spark DF, try to convert it from Pandas DF
-        try:
-            spark = SparkSession.builder.getOrCreate()
-            transformed_df = (
-                raw_df
-                if isinstance(raw_df, DataFrame)
-                else spark.createDataFrame(raw_df)
-            )
-        except ValueError as exc:
-            raise ValueError(
-                f"Expected Spark or Pandas dataframe in `raw_df` but got {type(raw_df)}"
-            ) from exc
-
-        # dict for mapping transformation_operations and their function_to_call:
-        # python 3.7+ has dict order as language specification so we can rely on this
-        default_transform_operations = {
-            "rename_columns": rename_df_columns,
-            "cast_columns": cast_df_columns,
-            "trim_columns": trim_columns,
-            "trim_all_string_columns": trim_all_string_columns,
-            "fill_na": fill_na,
-            "regex_replace_values": regex_replace_values,
-            "apply_sql_expression": apply_sql_expression,
-            "drop_duplicates": drop_duplicates,
-            "drop_null_values": drop_na_from_subset,
-            "drop_columns": drop_columns,
-            "keep_columns": keep_columns,
-            "drop_rows": drop_rows,
-            "keep_rows": keep_rows,
-            "dataframe_sampling": dataframe_sampling,
-        }
-
-        # get all requested instructions received as parameters
-        requested_instructions = list(instructions.keys())
-        logger.info("Requested instructions: %s", requested_instructions)
-
-        # warn for unknown instructions, if they exist
-        unknown_instructions = set(requested_instructions) - set(
-            default_transform_operations.keys()
-        )
-        if unknown_instructions:
-            logger.warning(
-                "Skipping unknown requested instructions: %s", unknown_instructions
-            )
-
-        # apply all requested instructions
-        for transf_operation, func in default_transform_operations.items():
-            if transf_operation in requested_instructions:
-                # get the instruction parameters, defined by the user
-                instruction = instructions[transf_operation]
-
-                logger.info("Applying `%s` using %s", transf_operation, instruction)
-                # call `func` (the value of each `default_transform_operations` item)
-                # using the instruction parameters
-                transformed_df = func(transformed_df, instruction)
-            else:
-                # skip all the unused operations
-                logger.warning(
-                    "No instructions defined for `%s`. Skipping transformation",
-                    transf_operation,
-                )
-
-        # use %s to use lazy logging evaluation
-        logger.info("Transformed dataframe schema:\n%s", pformat(transformed_df.schema))
-        logger.debug("Example of row:\n%s", pformat(transformed_df.take(1)))
-
-        # Log the Spark plan in debugging level (only if enabled).
-        if log_spark_info:
-            SparkInfo.log(df=transformed_df)
-
-        return transformed_df
 
     def ingest_incremental_data(
         self,
@@ -226,12 +82,6 @@ class Processor:
         self.parameters_dict = self._validate_parameters_dict(
             input_parameters_dict, historical=True
         )
-
-        # [Optional] create date columns through SQL expressions.
-        if self.parameters_dict.get("date_col_by_expr", None):
-            self.df = apply_sql_expression(
-                self.df, self.parameters_dict["date_col_by_expr"]
-            )
 
         # try to convert filter column to date type if it is not of type already
         self.df = self._convert_column_to_date(
@@ -293,12 +143,6 @@ class Processor:
         self.parameters_dict = self._validate_parameters_dict(
             input_parameters_dict, historical=True
         )
-
-        # [Optional] create date columns through SQL expressions.
-        if self.parameters_dict.get("date_col_by_expr", None):
-            self.df = apply_sql_expression(
-                self.df, self.parameters_dict["date_col_by_expr"]
-            )
 
         # try to convert filter column to date type if it is not of type already
         self.df = self._convert_column_to_date(
@@ -369,14 +213,12 @@ class Processor:
                 the predefined accepted types:
                 - for historical ingestion:
                     ```yaml
-                    "date_col_by_expr": dict,
                     "col_to_filter_by": str,
                     "start_dt": str,
                     "end_dt": str,
                     ```
                 - for incremental ingestion:
                     ```yaml
-                    "date_col_by_expr": dict,
                     "col_to_filter_by": str,
                     "existing_data_df": str,
                     ```
@@ -392,14 +234,12 @@ class Processor:
 
         if historical:
             ACCEPTED_KEYS_AND_TYPES = {
-                "date_col_by_expr": dict,
                 "col_to_filter_by": str,
                 "start_dt": str,
                 "end_dt": str,
             }
         else:
             ACCEPTED_KEYS_AND_TYPES = {
-                "date_col_by_expr": dict,
                 "col_to_filter_by": str,
                 "existing_data_df": str,
             }

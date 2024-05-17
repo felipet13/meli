@@ -10,6 +10,12 @@ def create_pipeline(**kwargs) -> Pipeline:
         [
             node(
                 func=preprocess_json_df,
+                inputs=["events", "params:raw_events"],
+                outputs=["preprocessed_events", "events_columns"],
+                name="preprocess_events_node",
+            ),
+            node(
+                func=preprocess_json_df,
                 inputs=["prints", "params:raw_prints"],
                 outputs=["preprocessed_prints", "prints_columns"],
                 name="preprocess_prints_node",
