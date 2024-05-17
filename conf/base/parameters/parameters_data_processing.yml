@@ -9,7 +9,7 @@ raw_prints:
     position: int
     value_prop: string
     user_id: int
-  date_column: day
+  col_to_filter_by: day
   
 
 raw_taps:
@@ -20,4 +20,4 @@ raw_taps:
     position: int
     value_prop: string
     user_id: int
-  date_column: day
+  col_to_filter_by: day

@@ -112,13 +112,6 @@ class Processor:
             input_parameters_dict: Key/value parameters to the integration pipeline.
                 This dictionary can contain the following keys:
 
-                - `date_col_by_expr` [Dict] - [Optional]: Use Spark SQL expression to
-                create a new date column or change name to existing date column. Pass
-                multiple SQL expression if intended to create more than 1 column.
-
-                    {"new_col_name1": "SQL_EXPR1",
-                    "new_col_name2": "SQL_EXPR2"}
-
                 - `col_to_filter_by`: Name of column to be used to filter dataframe rows
                 - `start_dt` [Optional]: Sets the initial date that `raw_df` dataframe
                 should be filtered.

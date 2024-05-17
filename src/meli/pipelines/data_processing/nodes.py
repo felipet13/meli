@@ -42,4 +42,5 @@ def preprocess_json_df(
     if parameters.get("columns_to_drop"):
         df_raw = df_raw.drop(*parameters["columns_to_drop"])
 
+    # TO DO: pasar el nombre del data frame en data type
     return df_raw, {"columns": df_raw.columns, "data_type": "df_raw"}
