@@ -20,7 +20,7 @@ import pandas as pd
 import pyspark
 from pyspark.sql import functions as f
 
-from ..core.utils.ingestion import (
+from .utils.ingestion import (
     get_only_filtered_data,
     get_only_incremental_data,
 )

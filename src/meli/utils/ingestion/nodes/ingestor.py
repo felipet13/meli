@@ -39,12 +39,12 @@ def ingest_historical_data(
     # Instantiation
     processor = Processor()
 
-    breakpoint()
     # Produce sliced data
     historical_data = processor.ingest_historical_data(
         input_parameters_dict=input_parameters_dict,
         raw_df=raw_df,
     )
+    breakpoint()
     return historical_data
 
 
