@@ -19,6 +19,7 @@ from typing import Dict, Union
 import pandas as pd
 import pyspark
 from pyspark.sql import functions as f
+from pyspark.sql.dataframe import DataFrame as SparkDataFrame
 
 from .utils.ingestion import (
     get_only_filtered_data,
@@ -40,24 +41,17 @@ class Processor:
 
     def ingest_incremental_data(
         self,
-        raw_df: Union[pyspark.sql.DataFrame, pd.DataFrame],
+        raw_df: Union[SparkDataFrame, pd.DataFrame],
         input_parameters_dict: Dict,
-        existing_data_df: Union[pyspark.sql.DataFrame, pd.DataFrame],
-    ) -> pyspark.sql.DataFrame:
+        existing_data_df: Union[SparkDataFrame, pd.DataFrame],
+    ) -> SparkDataFrame:
         """Process the integration steps, according to parameterized options.
 
         Args:
-            raw_df: Input dataframe for full processing (Historical).
+            raw_df: Input dataframe for incremental.
 
             input_parameters_dict: Key/value parameters to the integration pipeline.
                 This dictionary can contain the following keys:
-
-                - `date_col_by_expr` [Dict] - [Optional]: Use Spark SQL expression to
-                create a new date column or change name to existing date column. Pass
-                multiple SQL expresion if intended to create more than 1 column.
-
-                    {"new_col_name1": "SQL_EXPR1",
-                    "new_col_name2": "SQL_EXPR2"}
 
                 - `col_to_filter_by`: Name of column used to filter dataframe rows.
 
@@ -101,9 +95,9 @@ class Processor:
 
     def ingest_historical_data(
         self,
-        raw_df: Union[pyspark.sql.DataFrame, pd.DataFrame],
+        raw_df: Union[SparkDataFrame, pd.DataFrame],
         input_parameters_dict: Dict,
-    ) -> pyspark.sql.DataFrame:
+    ) -> SparkDataFrame:
         """Process the integration steps, according to parameterized options.
 
         Args:
@@ -158,18 +152,18 @@ class Processor:
 
     @staticmethod
     def _convert_dataframe(
-        df_name: str, input_df: Union[pd.DataFrame, pyspark.sql.DataFrame]
-    ) -> pyspark.sql.DataFrame:
-        """Converts a pandas.Dataframe to pyspark.sql.DataFrame, if necessary.
+        df_name: str, input_df: Union[pd.DataFrame, SparkDataFrame]
+    ) -> SparkDataFrame:
+        """Converts a pandas.Dataframe to SparkDataFrame, if necessary.
 
         Args:
             df_name: The name of the dataframe being casted, to be used in logging
              or Exception outputs.
-            input_df: A pyspark.sql.DataFrame or pandas.Dataframe.
+            input_df: A SparkDataFrame or pandas.Dataframe.
 
         Raises:
             ValueError: If the dataframe `input_df` is not a pandas.Dataframe or a
-             pyspark.sql.DataFrame.
+             SparkDataFrame.
 
         Returns:
             A converted PySpark Dataframe
@@ -178,7 +172,7 @@ class Processor:
         try:
             input_df = (
                 input_df
-                if isinstance(input_df, pyspark.sql.DataFrame)
+                if isinstance(input_df, SparkDataFrame)
                 else spark.createDataFrame(input_df)
             )
         except ValueError as exc:
@@ -280,8 +274,8 @@ class Processor:
         return parsed_parameters
 
     def _convert_column_to_date(
-        self, input_df: pyspark.sql.DataFrame, desired_date_col: str
-    ) -> pyspark.sql.DataFrame:
+        self, input_df: SparkDataFrame, desired_date_col: str
+    ) -> SparkDataFrame:
         """Converts column to date type.
 
         Args:

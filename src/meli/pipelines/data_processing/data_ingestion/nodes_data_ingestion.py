@@ -17,19 +17,19 @@ Serves as entry point.
 from typing import Dict, Union
 
 import pandas as pd
-import pyspark
+from pyspark.sql import DataFrame as SparkDataFrame
 
 from .core.processor import Processor
 
 
 def ingest_historical_data(
-    raw_df: Union[pyspark.sql.DataFrame, pd.DataFrame],
+    raw_df: Union[SparkDataFrame, pd.DataFrame],
     input_parameters_dict: Dict,
-) -> pyspark.sql.DataFrame:
-    """Return the sliced data for incremental ingestion.
+) -> SparkDataFrame:
+    """Return the sliced data for historical ingestion.
 
     Args:
-        raw_df: Input dataframe for incremental processing.
+        raw_df: Input dataframe for historical processing.
         input_parameters_dict: Dict of params to be passed to the processor class
             constructor.
 
@@ -44,15 +44,15 @@ def ingest_historical_data(
         input_parameters_dict=input_parameters_dict,
         raw_df=raw_df,
     )
-    breakpoint()
+
     return historical_data
 
 
 def ingest_incremental_data(
-    raw_df: Union[pyspark.sql.DataFrame, pd.DataFrame],
+    raw_df: Union[SparkDataFrame, pd.DataFrame],
     input_parameters_dict: Dict,
-    existing_data_df: Union[pyspark.sql.DataFrame, pd.DataFrame],
-) -> pyspark.sql.DataFrame:
+    existing_data_df: Union[SparkDataFrame, pd.DataFrame],
+) -> SparkDataFrame:
     """Return the sliced data for incremental ingestion.
 
     Args:

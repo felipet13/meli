@@ -1,23 +1,23 @@
+# Prints data frame
 raw_prints:
-  explode_column:
-    event_data
-  #Accepted values for `type`: `str`, `bool`, `int`, `long`, `float`, `double`,
-  #  `bytearray`, `bytes`, `decimal`, `date`, `datetime`, `time`, `timestamp`, `none`.
-  # If the `type` is not recognized, StringType will be returned.
-  columns_to_cast:
-    day: date
-    position: int
-    value_prop: string
-    user_id: int
   col_to_filter_by: day
-########### open by stage.. columns to cast and explode column should go later
 
-raw_taps:
+pre_process_prints:
   explode_column:
     event_data
   columns_to_cast:
-    day: date
     position: int
     value_prop: string
     user_id: int
+
+# Taps data frame
+raw_taps:
   col_to_filter_by: day
+
+pre_process_taps:
+  explode_column:
+    event_data
+  columns_to_cast:
+    position: int
+    value_prop: string
+    user_id: int

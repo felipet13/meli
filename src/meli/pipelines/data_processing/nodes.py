@@ -1,4 +1,5 @@
 import logging
+from pprint import pformat
 from typing import Dict, Tuple
 
 from pyspark.sql import DataFrame as SparkDataFrame
@@ -21,6 +22,9 @@ def preprocess_json_df(
         Preprocessed data, with `event_data` column splitting/exploding a column of dicts
         to regular columns.
     """
+    logger.info(
+            "`parameters`:\n%s", pformat(parameters)
+        )
     # Use from parameters dict the column of dicts to be exploded
     if parameters.get("explode_column") is not None:
         logger.info("Explode_column: %s", parameters.get("explode_column"))
@@ -43,4 +47,5 @@ def preprocess_json_df(
         df_raw = df_raw.drop(*parameters["columns_to_drop"])
 
     # TO DO: pasar el nombre del data frame en data type
+    breakpoint()
     return df_raw, {"columns": df_raw.columns, "data_type": "df_raw"}
