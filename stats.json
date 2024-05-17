@@ -1,1 +1,1 @@
-{"shuttle_passenger_capacity_plot_exp": {"rows": 31, "columns": 2, "file_size": 800}, "model_input_table": {"rows": 7512, "columns": 12, "file_size": 192}, "X_train": {"rows": 6009, "columns": 8}, "X_test": {"rows": 1503, "columns": 8}}
+{"shuttle_passenger_capacity_plot_exp": {"rows": 31, "columns": 2, "file_size": 960}, "model_input_table": {"rows": 7512, "columns": 12, "file_size": 192}, "X_train": {"rows": 6009, "columns": 8}, "X_test": {"rows": 1503, "columns": 8}}

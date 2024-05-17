@@ -19,7 +19,7 @@ from typing import Dict, Union
 import pandas as pd
 import pyspark
 
-from src.meli.utils.ingestion.core.processor import Processor
+from .core.processor import Processor
 
 
 def ingest_historical_data(
