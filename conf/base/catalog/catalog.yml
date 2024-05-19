@@ -144,9 +144,10 @@ metrics:
   type: tracking.MetricsDataset
   filepath: data/09_tracking/metrics.json
 
-companies_columns:
-  type: tracking.JSONDataset
-  filepath: data/09_tracking/companies_columns.json
+# prints_columns:
+#   type: tracking.JSONDataset
+#   filepath: data/09_tracking/prints_columns.json
+#   # versioned: True
 
 shuttle_passenger_capacity_plot_exp:
   type: plotly.PlotlyDataset

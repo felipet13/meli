@@ -21,3 +21,12 @@ preprocessed_taps:
     sep: ','
     header: True
     mode: overwrite
+
+
+prints_columns:
+  type: tracking.JSONDataset
+  filepath: data/09_tracking/prints_columns.json
+
+taps_columns:
+  type: tracking.JSONDataset
+  filepath: data/09_tracking/taps_columns.json

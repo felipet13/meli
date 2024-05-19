@@ -9,17 +9,17 @@ CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activ
 install:
 	conda create --name $(ENV_NAME) -y python=$(PYTHON_VERSION) --force
 	$(CONDA_ACTIVATE) $(ENV_NAME) && \
-	pip install -r src/requirements.txt && \
+	pip install -r requirements.txt && \
 	pre-commit install
-	@Echo Song "Environment $(ENV_NAME) successfully created"
+	@echo "Environment $(ENV_NAME) successfully created"
 install-clean:
 	conda remove -n $(ENV_NAME) --all -y
-	@Echo Song "Environment $(ENV_NAME) successfully removed"
+	@echo "Environment $(ENV_NAME) successfully removed"
 	conda create --name $(ENV_NAME) -y python=$(PYTHON_VERSION) --force
 	$(CONDA_ACTIVATE) $(ENV_NAME) && \
-	pip install -r src/requirements.txt && \
+	pip install -r requirements.txt && \
 	pre-commit install
-	@Echo Song "Environment $(ENV_NAME) successfully created"
+	@echo "Environment $(ENV_NAME) successfully created"
 update:
 	$(CONDA_ACTIVATE) $(ENV_NAME) && \
 	pip install -r src/requirements.txt -U

@@ -1,7 +1,5 @@
 from kedro.pipeline import Pipeline, node, pipeline
 
-from meli.pipelines.data_processing.nodes import preprocess_json_df
-
 from .nodes_data_ingestion import ingest_historical_data
 
 

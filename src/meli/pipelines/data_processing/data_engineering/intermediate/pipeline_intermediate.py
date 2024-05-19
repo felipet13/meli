@@ -1,6 +1,6 @@
 from kedro.pipeline import Pipeline, node, pipeline
 
-from .nodes import (
+from .nodes_intermediate import (
     preprocess_json_df,
 )
 
