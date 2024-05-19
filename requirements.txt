@@ -13,5 +13,6 @@ ruff~=0.1.8
 scikit-learn~=1.0
 seaborn~=0.12.1
 setuptools; python_version >= "3.12"
-ruff
-pre-commit
+ruff~=0.1.15
+pre-commit~=3.7.1
+pip-tools~=7.4.1

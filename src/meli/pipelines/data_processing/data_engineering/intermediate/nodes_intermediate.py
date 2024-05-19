@@ -63,4 +63,5 @@ def preprocess_df(
     logger.info("`output df columns and types`: \n ")
     df_raw.printSchema()
 
-    return df_raw, {"columns": df_raw.columns, "data_type": "df_raw"}
+    # Return DataFrame and dict column of {column_name:type} for tracking
+    return df_raw, {"columns": {k[0]: k[1] for k in df_raw.dtypes}}

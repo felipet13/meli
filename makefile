@@ -9,7 +9,7 @@ CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activ
 install:
 	conda create --name $(ENV_NAME) -y python=$(PYTHON_VERSION) --force
 	$(CONDA_ACTIVATE) $(ENV_NAME) && \
-	pip install -r requirements.txt && \
+	pip install -r requirements.lock && \
 	pre-commit install
 	@echo "Environment $(ENV_NAME) successfully created"
 install-clean:
@@ -17,7 +17,7 @@ install-clean:
 	@echo "Environment $(ENV_NAME) successfully removed"
 	conda create --name $(ENV_NAME) -y python=$(PYTHON_VERSION) --force
 	$(CONDA_ACTIVATE) $(ENV_NAME) && \
-	pip install -r requirements.txt && \
+	pip install -r requirements.lock && \
 	pre-commit install
 	@echo "Environment $(ENV_NAME) successfully created"
 update:
@@ -26,5 +26,7 @@ update:
 test:
 	python -m pytest
 lint:
-	${CONDA_ACTIVATE} $(ENV_NAME)
+	${CONDA_ACTIVATE} $(ENV_NAME) && \
 	pre-commit run -a
+compile:
+	pip-compile requirements.txt --output-file requirements.lock
