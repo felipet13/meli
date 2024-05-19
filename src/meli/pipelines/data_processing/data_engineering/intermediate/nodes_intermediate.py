@@ -61,6 +61,7 @@ def preprocess_df(
 
     # Log columns and types to output at final
     logger.info("`output df columns and types`: \n ")
+
     df_raw.printSchema()
 
     # Return DataFrame and dict column of {column_name:type} for tracking
