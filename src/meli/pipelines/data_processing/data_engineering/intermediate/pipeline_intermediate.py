@@ -20,5 +20,11 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs=["intermediate.taps", "intermediate.taps_columns"],
                 name="intermediate_taps_node",
             ),
+            node(
+                func=preprocess_df,
+                inputs=["ingested_raw.pays"],
+                outputs=["intermediate.pays", "intermediate.pays_columns"],
+                name="intermediate_pays_node",
+            ),
         ]
     )

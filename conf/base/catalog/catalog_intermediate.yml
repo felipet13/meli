@@ -33,7 +33,7 @@ intermediate.pays:
   type: spark.SparkDataset
   file_format: parquet
   save_args:
-    partitionBy: date
+    partitionBy: pay_date
     mode: overwrite
 
 intermediate.pays_columns:

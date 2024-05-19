@@ -9,8 +9,9 @@ from pyspark.sql.functions import col
 
 logger = logging.getLogger(__name__)
 
+
 def preprocess_df(
-    df_raw: SparkDataFrame, parameters: Dict
+    df_raw: SparkDataFrame, parameters: Dict = {}
 ) -> Tuple[SparkDataFrame, Dict]:
     """Preprocesses the data for df_raw.
 
@@ -21,9 +22,7 @@ def preprocess_df(
         Preprocessed data, with `event_data` column splitting/exploding a column of dicts
         to regular columns.
     """
-    logger.info(
-            "`parameters`:\n%s", pformat(parameters)
-        )
+    logger.info("`input parameters`:\n%s", pformat(parameters))
     # Use from parameters dict the column of dicts to be exploded
     if parameters.get("explode_column") is not None:
         logger.info("Explode_column: %s", parameters.get("explode_column"))
@@ -47,10 +46,21 @@ def preprocess_df(
 
     # Rename date column so partition name is congruent
     if parameters.get("date_col_name_change"):
-        df_raw = df_raw.withColumnRenamed(parameters.get("date_col_name_change")[0], parameters.get("date_col_name_change")[1])
-        logger.info( 
-            "`date_col_name_changed from`: \n {%s : %s}"
-            ,parameters.get("date_col_name_change")[0], parameters.get("date_col_name_change")[1]
+        df_raw = df_raw.withColumnRenamed(
+            parameters.get("date_col_name_change")[0],
+            parameters.get("date_col_name_change")[1],
         )
-    breakpoint()
+
+        # to get colorfull log
+        changed = {
+            parameters.get("date_col_name_change")[0]: parameters.get(
+                "date_col_name_change"
+            )[1]
+        }
+        logger.info("`date_col_name_changed from`: \n %s", changed)
+
+    # Log columns and types to output at final
+    logger.info("`output df columns and types`: \n ")
+    df_raw.printSchema()
+
     return df_raw, {"columns": df_raw.columns, "data_type": "df_raw"}
