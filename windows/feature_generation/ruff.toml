@@ -1,8 +1,0 @@
-# Extend the `pyproject.toml` file at repo root
-extend = "../../../pyproject.toml"
-
-[per-file-ignores]
-"*.ipynb" = [
-    "E402", # Module level import not at top of files - nb cells usually have their own imports
-    "F811", # Redefinition of unused <thing> - common in nbs to have same import multiple times
-]
