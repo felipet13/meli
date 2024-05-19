@@ -1,5 +1,5 @@
-preprocessed_prints:
-  filepath: data/02_intermediate/preprocessed_prints.parquet
+intermediate.prints:
+  filepath: data/02_intermediate/intermediate_prints.parquet
   type: spark.SparkDataset
   file_format: parquet
   load_args:
@@ -10,8 +10,8 @@ preprocessed_prints:
     header: True
     mode: overwrite
 
-preprocessed_taps:
-  filepath: data/02_intermediate/preprocessed_taps.parquet
+intermediate.taps:
+  filepath: data/02_intermediate/intermediate_taps.parquet
   type: spark.SparkDataset
   file_format: parquet
   load_args:
@@ -23,10 +23,10 @@ preprocessed_taps:
     mode: overwrite
 
 
-prints_columns:
+intermediate.prints_columns:
   type: tracking.JSONDataset
-  filepath: data/09_tracking/prints_columns.json
+  filepath: data/09_tracking/intermediate/prints_columns.json
 
-taps_columns:
+intermediate.taps_columns:
   type: tracking.JSONDataset
-  filepath: data/09_tracking/taps_columns.json
+  filepath: data/09_tracking/intermediate/taps_columns.json

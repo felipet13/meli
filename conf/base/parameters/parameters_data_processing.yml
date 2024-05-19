@@ -2,7 +2,7 @@
 raw_prints:
   col_to_filter_by: day
 
-pre_process_prints:
+intermediate_prints:
   explode_column:
     event_data
   columns_to_cast:
@@ -14,7 +14,7 @@ pre_process_prints:
 raw_taps:
   col_to_filter_by: day
 
-pre_process_taps:
+intermediate_taps:
   explode_column:
     event_data
   columns_to_cast:

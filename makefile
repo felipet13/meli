@@ -22,7 +22,7 @@ install-clean:
 	@echo "Environment $(ENV_NAME) successfully created"
 update:
 	$(CONDA_ACTIVATE) $(ENV_NAME) && \
-	pip install -r src/requirements.txt -U
+	pip install -r requirements.txt -U
 test:
 	python -m pytest
 lint:

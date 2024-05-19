@@ -10,15 +10,15 @@ def create_pipeline(**kwargs) -> Pipeline:
         [
             node(
                 func=preprocess_json_df,
-                inputs=["ingested_prints", "params:pre_process_prints"],
-                outputs=["preprocessed_prints", "prints_columns"],
-                name="preprocess_prints_node",
+                inputs=["ingested_raw.prints", "params:intermediate_prints"],
+                outputs=["intermediate.prints", "intermediate.prints_columns"],
+                name="intermediate_prints_node",
             ),
             node(
                 func=preprocess_json_df,
-                inputs=["taps", "params:pre_process_taps"],
-                outputs=["preprocessed_taps", "taps_columns"],
-                name="preprocess_taps_node",
+                inputs=["ingested_raw.taps", "params:intermediate_taps"],
+                outputs=["intermediate.taps", "intermediate.taps_columns"],
+                name="intermediate_taps_node",
             ),
         ]
     )

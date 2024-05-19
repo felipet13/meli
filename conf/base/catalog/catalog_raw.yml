@@ -1,5 +1,5 @@
 # catalog entry for pays dataframe
-pays:
+raw.pays:
   filepath: data/01_raw/pays.csv
   type: spark.SparkDataset
   file_format: csv
@@ -12,7 +12,7 @@ pays:
     mode: overwrite
 
 
-prints:
+raw.prints:
   filepath: data/01_raw/prints.json
   type: spark.SparkDataset
   file_format: json
@@ -23,7 +23,7 @@ prints:
     mode: overwrite
 
 
-taps:
+raw.taps:
   filepath: data/01_raw/taps.json
   type: spark.SparkDataset
   file_format: json
