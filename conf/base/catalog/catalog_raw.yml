@@ -8,10 +8,9 @@ raw.pays:
     inferSchema: True
   save_args:
     sep: ','
-    header: True
     mode: overwrite
 
-
+# catalog entry for prints dataframe
 raw.prints:
   filepath: data/01_raw/prints.json
   type: spark.SparkDataset
@@ -22,7 +21,7 @@ raw.prints:
     sep: ','
     mode: overwrite
 
-
+# catalog entry for taps dataframe
 raw.taps:
   filepath: data/01_raw/taps.json
   type: spark.SparkDataset

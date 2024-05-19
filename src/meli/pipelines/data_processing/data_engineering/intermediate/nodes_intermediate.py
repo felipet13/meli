@@ -9,8 +9,7 @@ from pyspark.sql.functions import col
 
 logger = logging.getLogger(__name__)
 
-
-def preprocess_json_df(
+def preprocess_df(
     df_raw: SparkDataFrame, parameters: Dict
 ) -> Tuple[SparkDataFrame, Dict]:
     """Preprocesses the data for df_raw.
@@ -46,5 +45,12 @@ def preprocess_json_df(
     if parameters.get("columns_to_drop"):
         df_raw = df_raw.drop(*parameters["columns_to_drop"])
 
+    # Rename date column so partition name is congruent
+    if parameters.get("date_col_name_change"):
+        df_raw = df_raw.withColumnRenamed(parameters.get("date_col_name_change")[0], parameters.get("date_col_name_change")[1])
+        logger.info( 
+            "`date_col_name_changed from`: \n {%s : %s}"
+            ,parameters.get("date_col_name_change")[0], parameters.get("date_col_name_change")[1]
+        )
     breakpoint()
     return df_raw, {"columns": df_raw.columns, "data_type": "df_raw"}

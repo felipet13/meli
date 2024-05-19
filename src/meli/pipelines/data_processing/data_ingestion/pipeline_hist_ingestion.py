@@ -19,5 +19,11 @@ def create_pipeline(**kwargs) -> Pipeline:
                 outputs="ingested_raw.taps",
                 name="ingest_taps_node",
             ),
+            node(
+                func=ingest_historical_data,
+                inputs=["raw.pays", "params:raw_pays"],
+                outputs="ingested_raw.pays",
+                name="ingest_pays_node",
+            ),
         ]
     )

@@ -1,32 +1,41 @@
+# Prints
 intermediate.prints:
   filepath: data/02_intermediate/intermediate_prints.parquet
   type: spark.SparkDataset
   file_format: parquet
-  load_args:
-    header: True
-    inferSchema: True
   save_args:
-    sep: ','
-    header: True
+    partitionBy: date
     mode: overwrite
-
-intermediate.taps:
-  filepath: data/02_intermediate/intermediate_taps.parquet
-  type: spark.SparkDataset
-  file_format: parquet
-  load_args:
-    header: True
-    inferSchema: True
-  save_args:
-    sep: ','
-    header: True
-    mode: overwrite
-
 
 intermediate.prints_columns:
   type: tracking.JSONDataset
   filepath: data/09_tracking/intermediate/prints_columns.json
 
+
+
+# Taps
+intermediate.taps:
+  filepath: data/02_intermediate/intermediate_taps.parquet
+  type: spark.SparkDataset
+  file_format: parquet
+  save_args:
+    partitionBy: date
+    mode: overwrite
+
 intermediate.taps_columns:
   type: tracking.JSONDataset
   filepath: data/09_tracking/intermediate/taps_columns.json
+
+
+# Pays
+intermediate.pays:
+  filepath: data/02_intermediate/intermediate_pays.parquet
+  type: spark.SparkDataset
+  file_format: parquet
+  save_args:
+    partitionBy: date
+    mode: overwrite
+
+intermediate.pays_columns:
+  type: tracking.JSONDataset
+  filepath: data/09_tracking/intermediate/pays_columns.json

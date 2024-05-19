@@ -9,6 +9,8 @@ intermediate_prints:
     position: int
     value_prop: string
     user_id: int
+  # [old_name, new_name]
+  date_col_name_change: [day, date]
 
 # Taps data frame
 raw_taps:
@@ -21,3 +23,10 @@ intermediate_taps:
     position: int
     value_prop: string
     user_id: int
+  # [old_name, new_name]
+  date_col_name_change: [day, date]
+
+
+# Pays data frame
+raw_pays:
+  col_to_filter_by: pay_date
