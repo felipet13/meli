@@ -1,14 +1,15 @@
 """Join methods rewritten as functions."""
 
 from datetime import timedelta
-from typing import Dict
 from logging import getLogger
+from typing import Dict
 
 from dateutil.relativedelta import relativedelta
 from pyspark.sql import DataFrame as SparkDataFrame
 from pyspark.sql.functions import col, max
 
 logger = getLogger(__name__)
+
 
 def calculate_target_weekday_date(date, target_weekday, weeks_prior):
     # Subtract weeks_prior from the given date
