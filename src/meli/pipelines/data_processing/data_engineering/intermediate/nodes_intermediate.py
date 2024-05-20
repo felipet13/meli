@@ -3,7 +3,7 @@ from pprint import pformat
 from typing import Dict, Tuple
 
 from pyspark.sql import DataFrame as SparkDataFrame
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, weekofyear, year
 
 # from pyspark.sql.types import DoubleType
 
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def preprocess_df(
-    df_raw: SparkDataFrame, parameters: Dict = {}
+    df_raw: SparkDataFrame, parameters: Dict
 ) -> Tuple[SparkDataFrame, Dict]:
     """Preprocesses the data for df_raw.
 
@@ -45,24 +45,32 @@ def preprocess_df(
         df_raw = df_raw.drop(*parameters["columns_to_drop"])
 
     # Rename date column so partition name is congruent
-    if parameters.get("date_col_name_change"):
-        df_raw = df_raw.withColumnRenamed(
-            parameters.get("date_col_name_change")[0],
-            parameters.get("date_col_name_change")[1],
-        )
+    cols_to_rename = parameters.get("columns_to_rename")
+    if cols_to_rename:
+        for key, val in cols_to_rename.items():
+            df_raw = df_raw.withColumnRenamed(
+                key,
+                val,
+            )
 
-        # to get colorfull log
-        changed = {
-            parameters.get("date_col_name_change")[0]: parameters.get(
-                "date_col_name_change"
-            )[1]
-        }
-        logger.info("`date_col_name_changed from`: \n %s", changed)
+    # log renamed columns
+    logger.info("`renamed cols`: \n %s", pformat(cols_to_rename))
 
     # Log columns and types to output at final
     logger.info("`output df columns and types`: \n ")
 
     df_raw.printSchema()
+
+    # Creates columns Year - Week_of_year for partitions
+    if parameters.get("date_col") is None:
+        raise ValueError("Parameter `date_col` is required and not set. ")
+    else:
+        df_raw = df_raw.withColumn(
+            "week_of_year", weekofyear(parameters.get("date_col"))
+        )
+        df_raw = df_raw.withColumn("year", year(parameters.get("date_col")))
+
+    logger.info("`Partitioning by`: [`Year`, `Week_of_year`] ")
 
     # Return DataFrame and dict column of {column_name:type} for tracking
     return df_raw, {"columns": {k[0]: k[1] for k in df_raw.dtypes}}

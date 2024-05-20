@@ -10,7 +10,9 @@ intermediate_prints:
     value_prop: string
     user_id: int
   # [old_name, new_name]
-  date_col_name_change: [day, date]
+  columns_to_rename: 
+    day: date
+  date_col: date
 
 # Taps data frame
 raw_taps:
@@ -24,9 +26,13 @@ intermediate_taps:
     value_prop: string
     user_id: int
   # [old_name, new_name]
-  date_col_name_change: [day, date]
-
+  columns_to_rename: 
+    day: date
+  date_col: date
 
 # Pays data frame
 raw_pays:
   col_to_filter_by: pay_date
+
+intermediate_pays:
+  date_col: pay_date
