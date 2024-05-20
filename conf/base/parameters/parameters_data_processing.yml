@@ -36,3 +36,6 @@ raw_pays:
 
 intermediate_pays:
   date_col: pay_date
+
+primary_pays:
+  date_col: pay_date
