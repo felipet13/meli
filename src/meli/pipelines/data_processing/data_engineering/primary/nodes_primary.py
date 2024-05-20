@@ -2,21 +2,27 @@
 
 from datetime import timedelta
 from typing import Dict
+from logging import getLogger
 
 from dateutil.relativedelta import relativedelta
 from pyspark.sql import DataFrame as SparkDataFrame
 from pyspark.sql.functions import col, max
 
+logger = getLogger(__name__)
 
-def calculate_four_weeks_prior_monday_date(date):
-    # Subtract 4 weeks from the given date
-    four_weeks_prior = date - relativedelta(weeks=4)
+def calculate_target_weekday_date(date, target_weekday, weeks_prior):
+    # Subtract weeks_prior from the given date
+    target_date = date - relativedelta(weeks=weeks_prior)
 
-    # Adjust the date to the nearest Monday
-    if four_weeks_prior.weekday() != 0:
-        four_weeks_prior = four_weeks_prior - timedelta(days=four_weeks_prior.weekday())
+    # Adjust the date to the target weekday
+    if target_date.weekday() != target_weekday:
+        if target_weekday == 0:  # Monday
+            target_date = target_date - timedelta(days=target_date.weekday())
+        elif target_weekday == 6:  # Sunday
+            days_to_add = 6 - target_date.weekday()
+            target_date = target_date + timedelta(days=days_to_add)
 
-    return four_weeks_prior
+    return target_date
 
 
 def load_last_4_weeks(
@@ -35,22 +41,21 @@ def load_last_4_weeks(
     max_date = df.select(max(parameters["date_col"])).collect()[0][0]
 
     # Calculate the date of the Monday 4 weeks prior to the max date
-    starting_monday_date = calculate_four_weeks_prior_monday_date(max_date)
+    starting_monday_date = calculate_target_weekday_date(max_date, 0, 4)
 
-    sunday_week_prior = max_date - relativedelta(weeks=1)
+    # Calculate the date of the Sunday of the week prior to the max date
+    sunday_week_prior = calculate_target_weekday_date(max_date, 6, 1)
 
-    if sunday_week_prior.weekday() != 6:
-        # Calculate the number of days to add to get to Sunday
-        days_to_add = 6 - sunday_week_prior.weekday()
-        sunday_week_prior = sunday_week_prior + timedelta(days=days_to_add)
+    # log the dates with logger info to console
+    logger.info(f"Starting Monday Date: {starting_monday_date}")
+    logger.info(f"Sunday Week Prior: {sunday_week_prior}")
 
     # Push down filtering to source so only last month data partitions are loaded
     # filter df column pay_date using 2 dates
-    df = df.filter(
-        col(parameters["date_col"]).between(
-            str(starting_monday_date), str(sunday_week_prior)
-        )
+    filter_condition = col(parameters["date_col"]).between(
+        str(starting_monday_date), str(sunday_week_prior)
     )
+    df = df.filter(filter_condition)
 
     return df
 
