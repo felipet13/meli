@@ -61,16 +61,17 @@ def preprocess_df(
 
     df_raw.printSchema()
 
-    # Creates columns Year - Week_of_year for partitions
-    if parameters.get("date_col") is None:
+    # Creates additional date column for partitioning for optimization on read on next layers
+    date_col = parameters.get("date_col")
+
+    if date_col is None:
         raise ValueError("Parameter `date_col` is required and not set. ")
     else:
         df_raw = df_raw.withColumn(
-            "week_of_year", weekofyear(parameters.get("date_col"))
+            date_col + "_partition", df_raw[date_col]
         )
-        df_raw = df_raw.withColumn("year", year(parameters.get("date_col")))
 
-    logger.info("`Partitioning by`: [`Year`, `Week_of_year`] ")
+    logger.info({"Partitioning by": date_col + "_partition"})
 
     # Return DataFrame and dict column of {column_name:type} for tracking
     return df_raw, {"columns": {k[0]: k[1] for k in df_raw.dtypes}}

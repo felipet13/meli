@@ -1,8 +1,9 @@
 from kedro.pipeline import Pipeline, node, pipeline
 
 from .nodes_primary import (
+    create_windows,
     join_dataframes,
-    load_last_4_weeks,
+    load_last_3_weeks,
 )
 
 
@@ -10,7 +11,7 @@ def create_pipeline(**kwargs) -> Pipeline:
     return pipeline(
         [
             node(
-                func=load_last_4_weeks,
+                func=load_last_3_weeks,
                 inputs=[
                     "intermediate.prints",
                     "params:primary_prints",
@@ -19,7 +20,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 name="primary_load_prints_node",
             ),
             node(
-                func=load_last_4_weeks,
+                func=load_last_3_weeks,
                 inputs=[
                     "intermediate.taps",
                     "params:primary_taps",
@@ -28,7 +29,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 name="primary_load_taps_node",
             ),
             node(
-                func=load_last_4_weeks,
+                func=load_last_3_weeks,
                 inputs=[
                     "intermediate.pays",
                     "params:primary_pays",
@@ -42,10 +43,19 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "primary_loaded.prints",
                     "primary_loaded.taps",
                     "primary_loaded.pays",
-                    "params:join_parameters",
+                    "params:primary_join_parameters",
                 ],
-                outputs=["primary_joined.pre_mdt"],
+                outputs="primary_joined.pre_mdt",
                 name="primary_join_tables_node",
+            ),
+            node(
+                func=create_windows,
+                inputs=[
+                    "primary_joined.pre_mdt",
+                    "params:primary_windows_parameters",
+                ],
+                outputs="primary_joined.mdt",
+                name="primary_create_windows_node",
             ),
         ]
     )

@@ -4,7 +4,7 @@ intermediate.prints:
   type: spark.SparkDataset
   file_format: parquet
   save_args:
-    partitionBy: [year, week_of_year]
+    partitionBy: date_partition
     mode: overwrite
 
 intermediate.prints_columns:
@@ -19,7 +19,7 @@ intermediate.taps:
   type: spark.SparkDataset
   file_format: parquet
   save_args:
-    partitionBy: [year, week_of_year]
+    partitionBy: date_partition
     mode: overwrite
 
 intermediate.taps_columns:
@@ -33,7 +33,7 @@ intermediate.pays:
   type: spark.SparkDataset
   file_format: parquet
   save_args:
-    partitionBy: [year, week_of_year]
+    partitionBy: pay_date_partition
     mode: overwrite
 
 intermediate.pays_columns:

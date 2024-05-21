@@ -5,13 +5,13 @@ from typing import Dict
 
 from pyspark.sql import DataFrame as SparkDataFrame
 from pyspark.sql.functions import col, max, when
-
-from .utils.calculate_date import calculate_target_weekday_date
+from dateutil.relativedelta import relativedelta
+from pyspark.sql.window import Window
 
 logger = getLogger(__name__)
 
 
-def load_last_4_weeks(
+def load_last_3_weeks(
     df: SparkDataFrame,
     parameters: Dict,
 ) -> SparkDataFrame:
@@ -23,23 +23,35 @@ def load_last_4_weeks(
     Returns:
         A spark dataframe.
     """
-    # Retrieve last available date in DataFrame using aggregate pushdown boosting speed
+    if parameters.get("date_col") is None:
+        raise ValueError("date col is missing from parameters")
+    
+    # Retrieve last available date in DataFrame using aggregate pushdown for speed boosting, Note is not done in partition column
+    # Calculate the max date in the DataFrame
     max_date = df.select(max(parameters["date_col"])).collect()[0][0]
 
-    # Calculate the date of the Monday 4 weeks prior to the max date
-    starting_monday_date = calculate_target_weekday_date(max_date, 0, 4)
+    last_n_days = parameters.get("last_n_days")
+    if last_n_days is None:
+        logger.warning("last_n_days parameter not found, defaulting to 3 weeks from max date for start date")
 
-    # Calculate the date of the Sunday of the week prior to the max date
-    sunday_week_prior = calculate_target_weekday_date(max_date, 6, 1)
+        # Calculate the start date of the 3 weeks prior relative to the max date
+        starting_day_date = max_date - relativedelta(weeks=3)
+
+    else:
+        # If last_n_days parameter present load only offset of start date as end date offset will be implicitly loaded
+        starting_day_date = max_date - relativedelta(days=last_n_days) - relativedelta(weeks=3)
+
+    # Calculate the date of the previous day to the max date
+    prior_day_date = max_date - relativedelta(days=1)
 
     # log the dates with logger info to console
-    logger.info(f"Starting Monday Date: {starting_monday_date}")
-    logger.info(f"Sunday Week Prior: {sunday_week_prior}")
+    logger.info(f"Starting Day Date: {starting_day_date}")
+    logger.info(f"Prior Day Date: {prior_day_date}")
 
-    # Push down filtering to source so only last month data partitions are loaded
-    # filter df column pay_date using 2 dates
-    filter_condition = col(parameters["date_col"]).between(
-        str(starting_monday_date), str(sunday_week_prior)
+    # Push down partition filtering to source so only necessary data partitions are loaded
+    # filter df column `date`` using 2 dates
+    filter_condition = col(parameters["date_col"] + "_partition").between(
+        str(starting_day_date), str(prior_day_date)
     )
     df = df.filter(filter_condition)
 
@@ -77,8 +89,6 @@ def join_dataframes(
             prints_df["position"],
             prints_df["value_prop"],
             prints_df["user_id"],
-            prints_df["year"],
-            prints_df["week_of_year"],
             taps_df["date"].alias("date_taps"),
         )
         .withColumn("customer_tap", when(col("date_taps").isNull(), 0).otherwise(1))
@@ -99,12 +109,36 @@ def join_dataframes(
             joined_df_1["position"],
             joined_df_1["value_prop"],
             joined_df_1["user_id"],
-            joined_df_1["year"],
-            joined_df_1["week_of_year"],
             joined_df_1["customer_tap"],
+            # pays_df["pay_date"],
             pays_df["total"].alias("paid_by_customer"),
         )
         .fillna(0)
     )
 
     return joined_df_final
+
+# 
+def create_windows(df: SparkDataFrame, parameters: Dict):
+    """Creates windows for the dataframe.
+
+    Args:
+        df: A spark dataframe.
+        parameters: Parameters defined in parameters/data_processing.yml.
+
+    Returns:
+        A spark dataframe.
+    """
+    # order by date ascending since spark parition execution may have dissordered dates
+    df_ordered = df.orderBy(df[parameters["date_col"]].asc())
+
+    # create window that calculates the count each user_id has customer_tap in the last 3 weeks prior to the date
+    window = (
+        Window()
+        .partitionBy("user_id")
+        .orderBy(df_ordered[parameters["date_col"]].asc())
+        .rangeBetween(-21, -1)
+    )
+
+
+    
