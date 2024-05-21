@@ -122,7 +122,6 @@ def join_dataframes(
     return joined_df_final
 
 
-#
 def create_windows(df: SparkDataFrame, parameters: Dict):
     """Creates windows for the dataframe.
 
