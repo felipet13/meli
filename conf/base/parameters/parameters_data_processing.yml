@@ -14,6 +14,9 @@ intermediate_prints:
     day: date
   date_col: date
 
+primary_prints:
+  date_col: date
+
 # Taps data frame
 raw_taps:
   col_to_filter_by: day
@@ -30,6 +33,9 @@ intermediate_taps:
     day: date
   date_col: date
 
+primary_taps:
+  date_col: date
+
 # Pays data frame
 raw_pays:
   col_to_filter_by: pay_date
@@ -39,3 +45,25 @@ intermediate_pays:
 
 primary_pays:
   date_col: pay_date
+
+
+# Reduce Join
+join_parameters:
+  prints_df:
+    cols_to_join:
+      - date
+      - user_id
+      - value_prop
+    join_type: left
+  taps_df:
+    cols_to_join:
+      - date
+      - user_id
+      - value_prop
+    join_type: left
+  pays_df:
+    cols_to_join:
+      - pay_date
+      - user_id
+      - value_prop
+  how: left

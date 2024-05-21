@@ -1,29 +1,14 @@
 """Join methods rewritten as functions."""
 
-from datetime import timedelta
 from logging import getLogger
 from typing import Dict
 
-from dateutil.relativedelta import relativedelta
 from pyspark.sql import DataFrame as SparkDataFrame
-from pyspark.sql.functions import col, max
+from pyspark.sql.functions import col, max, when
+
+from .utils.calculate_date import calculate_target_weekday_date
 
 logger = getLogger(__name__)
-
-
-def calculate_target_weekday_date(date, target_weekday, weeks_prior):
-    # Subtract weeks_prior from the given date
-    target_date = date - relativedelta(weeks=weeks_prior)
-
-    # Adjust the date to the target weekday
-    if target_date.weekday() != target_weekday:
-        if target_weekday == 0:  # Monday
-            target_date = target_date - timedelta(days=target_date.weekday())
-        elif target_weekday == 6:  # Sunday
-            days_to_add = 6 - target_date.weekday()
-            target_date = target_date + timedelta(days=days_to_add)
-
-    return target_date
 
 
 def load_last_4_weeks(
@@ -61,13 +46,13 @@ def load_last_4_weeks(
     return df
 
 
-def reduce_join_last_n_days(
+def join_dataframes(
     prints_df: SparkDataFrame,
     taps_df: SparkDataFrame,
     pays_df: SparkDataFrame,
-    # parameters: Dict,
+    parameters: Dict,
 ) -> SparkDataFrame:
-    """Joins a list of dataframes into a single dataframe on the specified join_key taking into consideration number of days to load in memory.
+    """Joins the dataframes in ``list_of_dataframes`` on the join key.
 
     Args:
         list_of_dataframes: A list of dataframes
@@ -77,23 +62,48 @@ def reduce_join_last_n_days(
     Returns:
         A spark dataframe.
     """
-    # Retrieve last available date in DataFrame using aggregate pushdown
+    join_conditions_1 = [
+        prints_df[col1] == taps_df[col2]
+        for col1, col2 in zip(
+            parameters["prints_df"]["cols_to_join"],
+            parameters["taps_df"]["cols_to_join"],
+        )
+    ]
 
-    # Push down filtering to source so only last month data is loaded
-    breakpoint()
-    spark = pays_df.sparkSession
-    spark.sparkContext.setJobDescription("test")
-    pays_df.agg(max("pay_date")).collect()[0][0]
+    joined_df_1 = (
+        prints_df.join(taps_df, on=join_conditions_1, how=parameters["how"])
+        .select(
+            prints_df["date"],
+            prints_df["position"],
+            prints_df["value_prop"],
+            prints_df["user_id"],
+            prints_df["year"],
+            prints_df["week_of_year"],
+            taps_df["date"].alias("date_taps"),
+        )
+        .withColumn("customer_tap", when(col("date_taps").isNull(), 0).otherwise(1))
+        .drop("date_taps")
+    )
 
-    # last 4 complete weeks, usar offset de 1 dia o algo
-    # taps_df = taps_df.filter(max(taps_df.date))
-    # last_4_weeks = df.filter((df('Date') > date_add(current_timestamp(), 5)).select("Event_Time","User_ID","Impressions","Clicks","URL", "Date")
+    join_conditions_2 = [
+        joined_df_1["date"] == pays_df["pay_date"],
+        joined_df_1["user_id"] == pays_df["user_id"],
+        joined_df_1["value_prop"] == pays_df["value_prop"],
+    ]
 
-    # ).first()[0]
+    joined_df_final = (
+        joined_df_1.join(pays_df, on=join_conditions_2, how=parameters["how"])
+        .select(
+            joined_df_1["date"],
+            joined_df_1["position"],
+            joined_df_1["value_prop"],
+            joined_df_1["user_id"],
+            joined_df_1["year"],
+            joined_df_1["week_of_year"],
+            joined_df_1["customer_tap"],
+            pays_df["total"].alias("paid_by_customer"),
+        )
+        .fillna(0)
+    )
 
-    # joined_df = prints_df.join(
-    #     taps_df, on=parameters["join_key"], how=parameters["how"]
-    # ).join(pays_df, on=parameters["join_key"], how=parameters["how"])
-    pass
-
-    return
+    return joined_df_final
