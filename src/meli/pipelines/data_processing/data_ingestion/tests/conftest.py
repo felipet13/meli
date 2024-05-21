@@ -18,7 +18,7 @@ SCHEMA_INGESTION_ORIG = StructType(
         StructField("customer_id", StringType(), True),
         StructField("birth_dt", StringType(), True),
         StructField("joining_dt", DateType(), True),
-        StructField("update_of_customer", StringType(), True),  # Original date column
+        StructField("update_dt", StringType(), True),  # Original date column
         StructField("nationality", StringType(), True),
         StructField("taxes_paid", FloatType(), True),
     ]

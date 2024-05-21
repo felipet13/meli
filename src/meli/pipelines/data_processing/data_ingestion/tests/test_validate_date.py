@@ -1,6 +1,6 @@
 import pytest
 
-from ingestion.core.utils.date_validation import validate_date
+from ..core.utils.date_validation import validate_date
 
 
 def test_valid_date():

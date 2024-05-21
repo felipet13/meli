@@ -5,10 +5,11 @@ from datetime import date
 
 import chispa
 import pytest
-from data_integration.tests.v0.conftest import generate_spark_dataframe
-from data_integration.v0.nodes import ingestor
 from pyspark.sql import DataFrame
 from pyspark.sql.types import DateType, FloatType, StringType, StructField, StructType
+
+from ..nodes_data_ingestion import ingest_historical_data, ingest_incremental_data
+from .conftest import generate_spark_dataframe
 
 
 class TestDataIngestion:
@@ -65,31 +66,6 @@ class TestDataIngestion:
         return df
 
     @staticmethod
-    def test_cast_date_col(
-        input_df_ingestion: DataFrame, casted_date_col_df: DataFrame, caplog
-    ):
-        """Test cast to Date operation."""
-        caplog.set_level(logging.INFO)
-
-        raw_parameters_dict = {
-            "col_to_filter_by": "update_dt",
-            "date_col_by_expr": {"update_dt": "update_of_customer"},
-        }
-
-        output_df = ingestor.ingest_historical_data(
-            raw_df=input_df_ingestion,
-            input_parameters_dict=raw_parameters_dict,
-        )
-
-        chispa.assert_df_equality(
-            output_df,
-            casted_date_col_df,
-            ignore_row_order=True,
-            ignore_column_order=True,
-            ignore_nullable=True,
-        )
-
-    @staticmethod
     @pytest.fixture
     def expected_incremental_df():
         """Expected output df of casting partition column to date."""
@@ -99,7 +75,6 @@ class TestDataIngestion:
                 StructField("customer_id", StringType(), True),
                 StructField("birth_dt", StringType(), True),
                 StructField("joining_dt", DateType(), True),
-                StructField("update_of_customer", StringType(), True),
                 StructField("update_dt", DateType(), True),
                 StructField("nationality", StringType(), True),
                 StructField("taxes_paid", FloatType(), True),
@@ -111,7 +86,6 @@ class TestDataIngestion:
                 "c001",
                 "1989-11-30",
                 date(2020, 1, 1),
-                "2022-12-25",
                 date(2022, 12, 25),
                 "Italian",
                 10.0,
@@ -120,7 +94,6 @@ class TestDataIngestion:
                 "c002",
                 "1990-11-30",
                 date(2022, 1, 1),
-                "2022-12-31",
                 date(2022, 12, 31),
                 "Brazilian",
                 20.0,
@@ -142,10 +115,9 @@ class TestDataIngestion:
 
         raw_parameters_dict = {
             "col_to_filter_by": "update_dt",
-            "date_col_by_expr": {"update_dt": "update_of_customer"},
         }
 
-        output_df = ingestor.ingest_incremental_data(
+        output_df = ingest_incremental_data(
             raw_df=input_df_ingestion,
             input_parameters_dict=raw_parameters_dict,
             existing_data_df=existing_df,
@@ -169,7 +141,6 @@ class TestDataIngestion:
                 StructField("customer_id", StringType(), True),
                 StructField("birth_dt", StringType(), True),
                 StructField("joining_dt", DateType(), True),
-                StructField("update_of_customer", StringType(), True),
                 StructField("update_dt", DateType(), True),
                 StructField("nationality", StringType(), True),
                 StructField("taxes_paid", FloatType(), True),
@@ -181,7 +152,6 @@ class TestDataIngestion:
                 "c001",
                 "1989-11-30",
                 date(2020, 1, 1),
-                "2022-12-25",
                 date(2022, 12, 25),
                 "Italian",
                 10.0,
@@ -190,7 +160,6 @@ class TestDataIngestion:
                 "c002",
                 "1990-11-30",
                 date(2022, 1, 1),
-                "2022-12-31",
                 date(2022, 12, 31),
                 "Brazilian",
                 20.0,
@@ -211,13 +180,12 @@ class TestDataIngestion:
         caplog.set_level(logging.INFO)
 
         raw_parameters_dict = {
-            "date_col_by_expr": {"update_dt": "update_of_customer"},
             "col_to_filter_by": "update_dt",
             "start_dt": "2022-12-01",
             "end_dt": "2022-12-31",
         }
 
-        output_df = ingestor.ingest_historical_data(
+        output_df = ingest_historical_data(
             raw_df=input_df_ingestion,
             input_parameters_dict=raw_parameters_dict,
         )
