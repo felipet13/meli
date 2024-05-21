@@ -1,0 +1,12 @@
+# Prints
+primary.mdt:
+  filepath: data/03_primary/primary_mdt.parquet
+  type: spark.SparkDataset
+  file_format: parquet
+  save_args:
+    partitionBy: date
+    mode: overwrite
+
+primary.mdt_columns:
+  type: tracking.JSONDataset
+  filepath: data/09_tracking/primary/mdt_columns.json

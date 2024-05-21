@@ -54,7 +54,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                     "primary_joined.pre_mdt",
                     "params:primary_windows_parameters",
                 ],
-                outputs="primary_joined.mdt",
+                outputs=["primary.mdt", "primary.mdt_columns"],
                 name="primary_create_windows_node",
             ),
         ]

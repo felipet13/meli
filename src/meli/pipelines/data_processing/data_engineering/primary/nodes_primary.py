@@ -140,11 +140,17 @@ def create_windows(df: SparkDataFrame, parameters: Dict):
         .orderBy(df[parameters["date_col"]].asc())
         .rowsBetween(-21, -1)
     )
-    df = df.withColumn("1", count("value_prop").over(window))
-    df = df.withColumn("2", sum("customer_tap").over(window))
-    df = df.withColumn("3", sum("paid_by_customer").over(window))
     df = df.withColumn(
-        "4",
+        "count_customer_saw_print_last_3_weeks", count("value_prop").over(window)
+    )
+    df = df.withColumn(
+        "count_customer_tap_print_last_3_weeks", sum("customer_tap").over(window)
+    )
+    df = df.withColumn(
+        "sum_customer_paid_last_3_weeks", sum("paid_by_customer").over(window)
+    )
+    df = df.withColumn(
+        "count_customer_paid_last_3_weeks",
         sum(when(col("paid_by_customer") > 0, 1).otherwise(0)).over(window),
     )
 
@@ -161,4 +167,5 @@ def create_windows(df: SparkDataFrame, parameters: Dict):
         )
     )
 
-    return df
+    breakpoint()
+    return df, {"columns": {k[0]: k[1] for k in df.dtypes}}
