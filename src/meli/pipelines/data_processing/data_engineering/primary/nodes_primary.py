@@ -3,9 +3,9 @@
 from logging import getLogger
 from typing import Dict
 
-from pyspark.sql import DataFrame as SparkDataFrame
-from pyspark.sql.functions import col, max, when
 from dateutil.relativedelta import relativedelta
+from pyspark.sql import DataFrame as SparkDataFrame
+from pyspark.sql.functions import col, count, max, sum, when
 from pyspark.sql.window import Window
 
 logger = getLogger(__name__)
@@ -25,21 +25,25 @@ def load_last_3_weeks(
     """
     if parameters.get("date_col") is None:
         raise ValueError("date col is missing from parameters")
-    
+
     # Retrieve last available date in DataFrame using aggregate pushdown for speed boosting, Note is not done in partition column
     # Calculate the max date in the DataFrame
     max_date = df.select(max(parameters["date_col"])).collect()[0][0]
 
     last_n_days = parameters.get("last_n_days")
     if last_n_days is None:
-        logger.warning("last_n_days parameter not found, defaulting to 3 weeks from max date for start date")
+        logger.warning(
+            "last_n_days parameter not found, defaulting to 3 weeks from max date for start date"
+        )
 
         # Calculate the start date of the 3 weeks prior relative to the max date
         starting_day_date = max_date - relativedelta(weeks=3)
 
     else:
         # If last_n_days parameter present load only offset of start date as end date offset will be implicitly loaded
-        starting_day_date = max_date - relativedelta(days=last_n_days) - relativedelta(weeks=3)
+        starting_day_date = (
+            max_date - relativedelta(days=last_n_days) - relativedelta(weeks=3)
+        )
 
     # Calculate the date of the previous day to the max date
     prior_day_date = max_date - relativedelta(days=1)
@@ -115,10 +119,10 @@ def join_dataframes(
         )
         .fillna(0)
     )
-
     return joined_df_final
 
-# 
+
+#
 def create_windows(df: SparkDataFrame, parameters: Dict):
     """Creates windows for the dataframe.
 
@@ -132,13 +136,37 @@ def create_windows(df: SparkDataFrame, parameters: Dict):
     # order by date ascending since spark parition execution may have dissordered dates
     df_ordered = df.orderBy(df[parameters["date_col"]].asc())
 
-    # create window that calculates the count each user_id has customer_tap in the last 3 weeks prior to the date
+    # creates window that calculates the count each user_id has customer_tap in the last 3 weeks prior to the date
     window = (
         Window()
-        .partitionBy("user_id")
+        .partitionBy(["user_id", "value_prop"])
         .orderBy(df_ordered[parameters["date_col"]].asc())
-        .rangeBetween(-21, -1)
+        .rowsBetween(-21, -1)
+    )
+    df = df.withColumn(
+        "count_customer_saw_print_last_3_weeks", count("value_prop").over(window)
+    )
+    df = df.withColumn(
+        "count_customer_tap_print_last_3_weeks", sum("customer_tap").over(window)
+    )
+    df = df.withColumn(
+        "sum_customer_paid_last_3_weeks", sum("paid_by_customer").over(window)
+    )
+    df = df.withColumn(
+        "count_customer_paid_last_3_weeks",
+        sum(when(col("paid_by_customer") > 0, 1).otherwise(0)).over(window),
     )
 
+    if parameters.get("last_n_days"):
+        last_n_days = parameters["last_n_days"]
+    else:
+        last_n_days = 0
+    # filter dataframe using date column for las 7 dates inclusive
+    max_date = df.select(max(parameters["date_col"])).collect()[0][0]
+    df = df.filter(
+        col(parameters["date_col"]).between(
+            max_date - relativedelta(days=last_n_days), max_date
+        )
+    )
 
-    
+    return df

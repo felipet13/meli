@@ -51,6 +51,7 @@ primary_pays:
 
 primary_windows_parameters:
   date_col: date
+  last_n_days: 7
 
 # Reduce Join
 primary_join_parameters:
