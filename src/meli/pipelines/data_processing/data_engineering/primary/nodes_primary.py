@@ -167,5 +167,4 @@ def create_windows(df: SparkDataFrame, parameters: Dict):
         )
     )
 
-    breakpoint()
     return df, {"columns": {k[0]: k[1] for k in df.dtypes}}
