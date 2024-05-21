@@ -51,7 +51,8 @@ primary_pays:
 
 primary_windows_parameters:
   date_col: date
-  last_n_days: 7
+  # Brings last complete week avaialble without today
+  last_n_days: 6
 
 # Reduce Join
 primary_join_parameters:
