@@ -133,27 +133,18 @@ def create_windows(df: SparkDataFrame, parameters: Dict):
     Returns:
         A spark dataframe.
     """
-    # order by date ascending since spark parition execution may have dissordered dates
-    df_ordered = df.orderBy(df[parameters["date_col"]].asc())
-
     # creates window that calculates the count each user_id has customer_tap in the last 3 weeks prior to the date
     window = (
         Window()
         .partitionBy(["user_id", "value_prop"])
-        .orderBy(df_ordered[parameters["date_col"]].asc())
+        .orderBy(df[parameters["date_col"]].asc())
         .rowsBetween(-21, -1)
     )
+    df = df.withColumn("1", count("value_prop").over(window))
+    df = df.withColumn("2", sum("customer_tap").over(window))
+    df = df.withColumn("3", sum("paid_by_customer").over(window))
     df = df.withColumn(
-        "count_customer_saw_print_last_3_weeks", count("value_prop").over(window)
-    )
-    df = df.withColumn(
-        "count_customer_tap_print_last_3_weeks", sum("customer_tap").over(window)
-    )
-    df = df.withColumn(
-        "sum_customer_paid_last_3_weeks", sum("paid_by_customer").over(window)
-    )
-    df = df.withColumn(
-        "count_customer_paid_last_3_weeks",
+        "4",
         sum(when(col("paid_by_customer") > 0, 1).otherwise(0)).over(window),
     )
 
@@ -161,6 +152,7 @@ def create_windows(df: SparkDataFrame, parameters: Dict):
         last_n_days = parameters["last_n_days"]
     else:
         last_n_days = 0
+
     # filter dataframe using date column for las 7 dates inclusive
     max_date = df.select(max(parameters["date_col"])).collect()[0][0]
     df = df.filter(
