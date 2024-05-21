@@ -85,6 +85,7 @@ def join_dataframes(
         .drop("date_taps")
     )
 
+    # If done as join_conditions_1 generates error TODO investigate
     join_conditions_2 = [
         joined_df_1["date"] == pays_df["pay_date"],
         joined_df_1["user_id"] == pays_df["user_id"],
