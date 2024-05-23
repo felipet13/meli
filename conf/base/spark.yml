@@ -5,6 +5,7 @@ spark.hadoop.fs.s3a.impl: org.apache.hadoop.fs.s3a.S3AFileSystem
 spark.sql.sources.useV1SourceList: ""
 spark.sql.execution.arrow.pyspark.enabled: true
 spark.sql.parquet.aggregatePushdown: true
+spark.sql.sources.partitionOverwriteMode: dynamic
 
 # https://docs.kedro.org/en/stable/integrations/pyspark_integration.html#tips-for-maximising-concurrency-using-threadrunner
 spark.scheduler.mode: FAIR
